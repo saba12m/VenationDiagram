@@ -13,10 +13,9 @@ public:
 private:
     void attractorCheck();
     void generateRng();
-    void newNodesPositionCheck(); //
     void generateNewNodes();
     void fixStrayLines();
-    void nodeOptimization();
+    void removeCloseNodes();
     
     int leafRadius;
     int nodeRadius;
@@ -41,12 +40,14 @@ private:
     vector <int> strayLinesNodesIndex;
     vector <vector <int>> strayLines;
     vector <vector <int>> nodeContainer;
+    vector <vector <int>> nodeContainerOptimized;
     vector <vector <int>> lines;
     vector <vector <int>> nodeNeighbors;
     vector <vector <int>> attractorNeighbors;
     vector <vector <int>> nodeNodeNeighbors;
     vector <vector <bool>> rng;
     vector <vector <vector <int>>> containers;
+    vector <vector <vector <int>>> containersOptimized;
     
     vector <Branch> branches;
     vector <Branch> currentBranches;

@@ -9,12 +9,14 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     rng.clear();
     strayLinesNodesIndex.clear();
     strayLines.clear();
-    branches.clear();
-    currentBranches.clear();
     containers.clear();
+    containersOptimized.clear();
     nodeContainer.clear();
+    nodeContainerOptimized.clear();
     nodesOptimized.clear();
     nodesDeleted.clear();
+    branches.clear();
+    currentBranches.clear();
     leafRadius = _leafRadius;
     nodeRadius = _nodeRadius;
     initial = true;
@@ -47,7 +49,7 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
                     removed++;
                 }
     
-    // refilling till attractor numbers are met
+    // refilling until attractor numbers are met
 //    size = attractors.size();
 //    while (size < _noOfAttractors - 1)
 //    {
@@ -121,7 +123,7 @@ void Venation2DClosed::update()
 //    if (!initial) newNodesPositionCheck();
     generateNewNodes();
     if (attractors.empty() && addStrayLines) fixStrayLines();
-    if (optimizeNodes) nodeOptimization();
+    if (optimizeNodes) removeCloseNodes();
     initial = false;
 }
 
@@ -142,7 +144,6 @@ void Venation2DClosed::draw()
     ofNoFill();
     ofSetColor(200);
     ofDrawCircle(0, 0, leafRadius);
-    
     
     // draw attractors copy
 //    ofPushStyle();
@@ -174,7 +175,7 @@ void Venation2DClosed::draw()
     for (int i = 0; i < nodesOptimized.size(); i++) ofDrawCircle(nodesOptimized[i].x, nodesOptimized[i].y, nodeRadius);
     
     // draw deleted nodes
-    ofSetColor(0, 0, 255, 100);
+    ofSetColor(255, 0, 0, 100);
     for (int i = 0; i < nodesDeleted.size(); i++) ofDrawCircle(nodesDeleted[i].x, nodesDeleted[i].y, nodeRadius);
 
     // draw nodes
@@ -351,29 +352,6 @@ void Venation2DClosed::generateRng()
             if (rng[i][j]) nodeNodeNeighbors[i].push_back(j); // beacuse we need the index of the attractor!
 }
 
-void Venation2DClosed::newNodesPositionCheck()
-{
-    for (int i = nodes.size() - 1; i >= newNodesIndex; i--)
-    {
-        float dist = nodeRadius * 2;
-        int index = 0;
-        for (int j = 0; j < nodeNodeNeighbors[i].size(); j++)
-        {
-            int neighbor = nodeNodeNeighbors[i][j];
-//            if (neighbor < newNodesIndex)
-            {
-                float tempDist = ofDist(nodes[i].x, nodes[i].y, nodes[neighbor].x, nodes[neighbor].y);
-                if (tempDist < dist)
-                {
-                    dist = tempDist;
-                    index = neighbor;
-                }
-            }
-        }
-        if (dist < nodeRadius * 2) nodes[i].set(ofVec2f(nodes[index].x, nodes[index].y));
-    }
-}
-
 void Venation2DClosed::generateNewNodes()
 {
     tempNodesSize = nodes.size();
@@ -470,113 +448,76 @@ void Venation2DClosed::fixStrayLines()
         optimizeNodes = true;
 }
 
-void Venation2DClosed::nodeOptimization()
+void Venation2DClosed::removeCloseNodes()
 {
-    // getting unique nodes
-    vector <ofVec2f> nodesUnique;
-    vector <vector <int>> nodeContainerUnique;
-    vector <vector <vector <int>>> containersUnique;
+    vector <int> nodesToDelete;
+    for (int i = 0; i < nodes.size(); i++) nodesOptimized.push_back(nodes[i]);
     
-//    nodesUnique = nodes;
-//    nodeContainerUnique = nodeContainer;
-//    containersUnique = containers;
-    
-    containersUnique.resize(containerSize);
-    for (int i = 0; i < containersUnique.size(); i++) containersUnique[i].resize(containerSize);
-    
-    int removed = 0;
-    int size = nodes.size();
-    for (int i = size - 1; i >= 0; i--)
-    {
-        bool addToUniqueNodes = true;
-        for (int j = i; j >= 0; j--)
-            if (i != j && j < size - removed)
-                if (ofDist(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y) < nodeRadius * 0.01)
-                {
-                    addToUniqueNodes = false;
-                    removed++;
-                    break;
-                }
-        if (addToUniqueNodes)
-        {
-            int nodeX = floor(ofMap(nodes[i].x, -leafRadius, leafRadius, 0, containerSize));
-            int nodeY = floor(ofMap(nodes[i].y, -leafRadius, leafRadius, 0, containerSize));
-            containersUnique[nodeX][nodeY].push_back(nodesUnique.size());
-            nodeContainerUnique.push_back(vector <int> {nodeX, nodeY});
-            nodesUnique.push_back(nodes[i]);
-        }
-    }
-
     // optimizing nodes to remove close proximity nodes
-    float proximityRatio = 0.6;
-    for (int n = 0; n < nodesUnique.size(); n++)
+    float proximityRatio = 0.8;
+    for (int n = 0; n < nodesOptimized.size(); n++)
     {
         bool addToOptimizedNodes = true;
-        int mei = nodeContainerUnique[n][0];
-        int mej = nodeContainerUnique[n][1];
+        int mei = nodeContainer[n][0];
+        int mej = nodeContainer[n][1];
         for (int i = mei - 1; i <= mei + 1; i++)
             if (addToOptimizedNodes)
-            {
                 for (int j = mej - 1; j <= mej + 1; j++)
                     if (addToOptimizedNodes)
-                    {
-                        if (i >= 0 && i < containersUnique.size() && j >= 0 && j < containersUnique[i].size())
-                            if (containersUnique[i][j].size() > 0)
-                                for (int k = 0; k < containersUnique[i][j].size(); k++)
+                        if (i >= 0 && i < containers.size() && j >= 0 && j < containers[i].size())
+                            if (containers[i][j].size() > 0)
+                                for (int k = 0; k < containers[i][j].size(); k++)
                                     if (addToOptimizedNodes)
-                                        if (containersUnique[i][j][k] != n)
+                                        if (containers[i][j][k] != n)
                                         {
-                                            ofVec2f meNode = nodesUnique[n];
-                                            ofVec2f otherNode = nodesUnique[containersUnique[i][j][k]];
+                                            ofVec2f meNode = nodesOptimized[n];
+                                            ofVec2f otherNode = nodesOptimized[containers[i][j][k]];
                                             float dist = ofDist(meNode.x, meNode.y, otherNode.x, otherNode.y);
                                             if (dist < nodeRadius * proximityRatio) addToOptimizedNodes = false;
                                         }
-                    }
-            }
-                
-        if (addToOptimizedNodes) nodesOptimized.push_back(nodesUnique[n]);
-        else nodesDeleted.push_back(nodesUnique[n]);
+        
+        if (!addToOptimizedNodes) nodesToDelete.push_back(n);
     }
     
     //getting rid of the extra nodes in the close proximity ones
-    removed = 0;
-    for (int i = nodesDeleted.size() - 1; i >= 0 ; i--)
+    int removed = 0;
+    for (int i = nodesToDelete.size() - 1; i >= 0 ; i--)
     {
         bool deleteNode = false;
         for (int j = i; j >= 0; j--)
-            if (i != j && j < nodesDeleted.size() - removed)
-                if (ofDist(nodesDeleted[i].x, nodesDeleted[i].y, nodesDeleted[j].x, nodesDeleted[j].y) < nodeRadius * proximityRatio)
-                    {
-                        deleteNode = true;
-                        removed++;
-                        break;
-                    }
-        if (deleteNode) nodesDeleted.erase(nodesDeleted.begin() + i);
+            if (i != j && j < nodesToDelete.size() - removed)
+                if (ofDist(nodesOptimized[nodesToDelete[i]].x, nodesOptimized[nodesToDelete[i]].y, nodesOptimized[nodesToDelete[j]].x, nodesOptimized[nodesToDelete[j]].y) < nodeRadius * proximityRatio)
+                {
+                    deleteNode = true;
+                    removed++;
+                    break;
+                }
+        if (deleteNode) nodesToDelete.erase(nodesToDelete.begin() + i);
     }
-            
-                
-//    // optimizing nodes to remove close proximity nodes
-//    for (int n = 0; n < nodes.size(); n++)
-//    {
-//        bool addToOptimizedNodes = true;
-//        int mei = nodeContainer[n][0];
-//        int mej = nodeContainer[n][1];
-//        for (int i = mei - 1; i <= mei + 1; i++)
-//            if (addToOptimizedNodes)
-//                for (int j = mej - 1; j <= mej + 1; j++)
-//                    if (addToOptimizedNodes)
-//                        if (i >= 0 && i < containers.size() && j >= 0 && j < containers[i].size())
-//                            for (int k = 0; k < containers[i][j].size(); k++)
-//                                if (addToOptimizedNodes)
-//                                    if (containers[i][j][k] != n)
-//                                    {
-//                                        ofVec2f meNode = nodes[n];
-//                                        ofVec2f otherNode = nodes[containers[i][j][k]];
-//                                        float dist = ofDist(meNode.x, meNode.y, otherNode.x, otherNode.y);
-//                                        if (dist < nodeRadius * 0.2) addToOptimizedNodes = false;
-//                                    }
-//        if (addToOptimizedNodes) nodesOptimized.push_back(nodes[n]);
-//    }
+    
+    // resetting the 3 main databases (1.nodes, 2.containers & 3.nodeContainer)
+    
+    // 1
+    // need to sort this first so that removed nodes by the stacking effect aren't being removed at the end
+    sort(nodesToDelete.begin(), nodesToDelete.begin() + nodesToDelete.size());
+    for (int i = nodesToDelete.size() - 1; i >= 0; i--)
+    {
+        nodesOptimized.erase(nodesOptimized.begin() + nodesToDelete[i]);
+        nodesDeleted.push_back(nodes[nodesToDelete[i]]);
+    }
+
+    // 2 & 3
+    containersOptimized.resize(containerSize);
+    for (int i = 0; i < containersOptimized.size(); i++) containersOptimized[i].resize(containerSize);
+    
+    for (int i = 0; i <nodesOptimized.size(); i++)
+    {
+        int nodeX = floor(ofMap(nodesOptimized[i].x, -leafRadius, leafRadius, 0, containerSize));
+        int nodeY = floor(ofMap(nodesOptimized[i].y, -leafRadius, leafRadius, 0, containerSize));
+        containersOptimized[nodeX][nodeY].push_back(i);
+        nodeContainerOptimized.push_back(vector <int> {nodeX, nodeY});
+    }
+    
     optimizeNodes = false;
-    cout << nodes.size() << "-" << nodeContainer.size() <<  "-" << nodesUnique.size() <<  "-" << nodesOptimized.size() << nodesDeleted.size() << endl;
+    cout << nodes.size() << "-" << nodeContainer.size() << "-" << nodesOptimized.size() << "-" << nodeContainerOptimized.size() << endl;
 }
