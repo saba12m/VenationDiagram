@@ -24,7 +24,7 @@ void ofApp::setup(){
     dirLight6.setDiffuseColor(ofColor(50, 50, 100));
     dirLight6.setDirectional();
     
-//    v.setup(360, 2, 2400);
+//    v.setup(240, 2, 1200);
     v.setup(100, 2, 480);
 //    v.setup(50, 2, 20);
     run = false;
@@ -59,12 +59,24 @@ void ofApp::setup(){
     
     boundingBox.set(maxX - minX, maxY - minY, maxZ - minZ);
     boundingBox.setPosition((maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2);
+    
     // STL test
     stl.loadSTL(ofToDataPath("Geometry Test 1 Binary.stl"));
-//    stl.rescaleModel(400);
     
     // mesh test
     m.setup(ofVec3f(10, 10, 0), ofVec3f(20, 30, 40), 6, 10, 20);
+    
+    // raycasting
+    FaceTri tri;
+    tri.v0 = ofPoint(ofGetWidth()/2, ofGetHeight()/2/2, -1000);
+    tri.v1 = ofPoint(ofGetWidth()/2-200, ofGetHeight()/2+(ofGetHeight()/2/2), -1000);
+    tri.v2 = ofPoint(ofGetWidth()/2+200, ofGetHeight()/2+(ofGetHeight()/2/2), -1000);
+    tris.push_back(tri);
+    
+    Ray ray;
+    ray.rayOrig.set(0, 0, 0);
+    ray.rayEnd.set(0, 0, -2000);
+    rays.push_back(ray);
 }
 
 //--------------------------------------------------------------
@@ -82,6 +94,15 @@ void ofApp::update(){
     dirLight6.setPosition(0, 0, 100);
     dirLight6.lookAt(ofVec3f(0, 0, 0));
     if (run) v.update();
+    
+    // raycasting
+    rays.at(0).rayOrig.set(ofGetWidth() / 2, ofGetHeight() / 2, 0);
+    rays.at(0).rayEnd.set(ofGetWidth() / 2, ofGetHeight() / 2, -2000);
+//    rays.at(0).rayOrig.set(mouseX, mouseY, 0);
+//    rays.at(0).rayEnd.set(mouseX, mouseY, -2000);
+    ofVec3f rayDir = rays.at(0).rayEnd;
+    rayDir -= rays.at(0).rayOrig;
+    rtIntersect.checkMeshIntersection(rays, tris);
 }
 
 //--------------------------------------------------------------
@@ -94,32 +115,33 @@ void ofApp::draw(){
 //    dirLight6.enable();
 
     cam.begin();
-    v.draw();
+    
+    // venation
+//    v.draw();
+    
+//    //raycasting
+//    rtIntersect.drawDebug();
+//    rtIntersect.drawRayDebug();
+//    long y = 0.123456789;
+//    auto x = rtIntersect.checkMeshIntersection(rays, tris);
+//    if (x.size() > 0) cout << x[0].bIntersect << endl;
+//
+//    // bounding box
 //    boundingBox.drawWireframe();
-//    ofSetColor(255, 255, 255);
-////    model.draw(OF_MESH_FILL);
-//    model.draw(OF_MESH_WIREFRAME);
+//
+//    // model
+////    ofSetColor(255, 255, 255);
+////    model.draw(OF_MESH_WIREFRAME);
+//
+//    // mesh of the model
 //    ofSetColor(255, 0, 0);
 //    modelMesh.drawWireframe();
-    
-//    stl.drawFacets();
+//
+//    // stl
 //    ofSetColor(0, 255, 0);
 //    stl.drawWireFrame();
-//    stl.drawNormals();
-//    stl.shiftModelPosition(ofVec3f(1, 0, 0));
 //    cen = stl.getModelCenter();
-//
-//    ofSetColor(255, 255, 255);
-//    ofDrawSphere(cen.x, cen.y, cen.z, 2);
-//    
-//    ofSetColor(255, 0, 0);
-//    ofDrawSphere(p.x, p.y, p.z, 2);
-//    ofSetColor(0, 255, 0);
-//    ofDrawSphere(min.x, min.y, min.z, 2);
-//    ofSetColor(0, 0, 255);
-//    ofDrawSphere(max.x, max.y, max.z, 2);
 
-    
     // draw axes
     ofSetColor(255, 0, 0);
     ofDrawLine(0, 0, 0, 100, 0, 0);
@@ -137,7 +159,7 @@ void ofApp::keyPressed(int key){
     if (key == ' ') run = true;
     if (key == 'r')
     {
-//        v.setup(360, 2, 2400);
+//    v.setup(240, 2, 1200);
         v.setup(100, 2, 480);
 //        v.setup(50, 2, 20);
         cam.reset();

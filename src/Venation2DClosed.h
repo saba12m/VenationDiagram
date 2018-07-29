@@ -16,6 +16,7 @@ private:
     void generateNewNodes();
     void fixStrayLines();
     void removeCloseNodes();
+    void finalRng();
     
     int leafRadius;
     int nodeRadius;
@@ -27,9 +28,7 @@ private:
     float containerLength;
     
     bool initial;
-    bool addStrayLines;
     bool optimizeNodes;
-    
 
     vector <ofVec2f> attractors;
     vector <ofVec2f> attractorsOriginal;
@@ -42,12 +41,16 @@ private:
     vector <vector <int>> nodeContainer;
     vector <vector <int>> nodeContainerOptimized;
     vector <vector <int>> lines;
+    vector <vector <int>> linesOptimized;
+    vector <vector <int>> lineContainer;
     vector <vector <int>> nodeNeighbors;
     vector <vector <int>> attractorNeighbors;
     vector <vector <int>> nodeNodeNeighbors;
     vector <vector <bool>> rng;
+    vector <vector <bool>> rngOptimized;
     vector <vector <vector <int>>> containers;
     vector <vector <vector <int>>> containersOptimized;
+    vector <vector <vector <int>>> containersLinesOptimized;
     
     vector <Branch> branches;
     vector <Branch> currentBranches;

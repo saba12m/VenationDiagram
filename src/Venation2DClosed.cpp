@@ -6,13 +6,17 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     attractorsOriginal.clear();
     nodes.clear();
     lines.clear();
+    linesOptimized.clear();
     rng.clear();
+    rngOptimized.clear();
     strayLinesNodesIndex.clear();
     strayLines.clear();
     containers.clear();
     containersOptimized.clear();
+    containersLinesOptimized.clear();
     nodeContainer.clear();
     nodeContainerOptimized.clear();
+    lineContainer.clear();
     nodesOptimized.clear();
     nodesDeleted.clear();
     branches.clear();
@@ -20,79 +24,13 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     leafRadius = _leafRadius;
     nodeRadius = _nodeRadius;
     initial = true;
-    addStrayLines = true;
-    optimizeNodes = false;
+    optimizeNodes = true;
     // setting starting Point
     nodes.push_back(ofVec2f(0, 0));
 //    nodes.push_back(ofVec2f(0, -(leafRadius - nodeRadius)));
     
-    // setting attraction points
-    for (int i = 0; i < _noOfAttractors; i++)
-    {
-         float distance = ofRandom(leafRadius * 0.0, leafRadius - nodeRadius);
-        float angle = ofRandom(ofDegToRad(360));
-        float x = cos(angle) * distance;
-        float y = sin(angle) * distance;
-        attractors.push_back(ofVec2f(x, y));
-    }
     
-    // checking attraction point overlaps
-    int removed = 0;
-    int size = attractors.size();
-    for (int i = size - 1; i >= 0; i--)
-        for (int j = size - 1; j >= 0; j--)
-            if (i != j && j < size - removed)
-                if (ofDist(attractors[i].x, attractors[i].y,
-                           attractors[j].x, attractors[j].y) < nodeRadius * 2)
-                {
-                    attractors.erase(attractors.begin() + j);
-                    removed++;
-                }
-    
-    // refilling until attractor numbers are met
-//    size = attractors.size();
-//    while (size < _noOfAttractors - 1)
-//    {
-//        float distance = ofRandom(leafRadius * 0.0, leafRadius - nodeRadius);
-//        float angle = ofRandom(ofDegToRad(360));
-//        float x = cos(angle) * distance;
-//        float y = sin(angle) * distance;
-//        ofVec2f v = ofVec2f(x, y);
-//        bool add = true;
-//        
-//        for (int j = size - 1; j >= 0; j--)
-//            if (ofDist(v.x, v.y, attractors[j].x, attractors[j].y) < nodeRadius * 2)
-//            {
-//                add = false;
-//                break;
-//            }
-//        
-//        if (add) attractors.push_back(v);
-//    }
-    
-//    while (size < _noOfAttractors - 1)
-//    {
-//        for (int i = 0; i < _noOfAttractors - size; i++)
-//        {
-//            float distance = ofRandom(leafRadius * 0.0, leafRadius - nodeRadius);
-//            float angle = ofRandom(ofDegToRad(360));
-//            float x = cos(angle) * distance;
-//            float y = sin(angle) * distance;
-//            attractors.push_back(ofVec2f(x, y));
-//        }
-//
-//        for (int i = size; i < _noOfAttractors; i++)
-//            for (int j = _noOfAttractors - 1; j >= 0; j--)
-//                if (i != j && j < size - removed)
-//                    if (ofDist(attractors[i].x, attractors[i].y,
-//                               attractors[j].x, attractors[j].y) < nodeRadius * 2)
-//                    {
-//                        attractors.erase(attractors.begin() + j);
-//                        removed++;
-//                    }
-//    }
-    
-    // setting up container
+    // setting up container sizes
     containerSize = 16;
     containerLength = (float) leafRadius * 2 / (float) containerSize;
     while (containerLength < nodeRadius * 2) // just in case the container sizes are larger than the nodes
@@ -101,6 +39,52 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
         containerSize / 2;
     }
     
+    // using containers for attractors here
+    containers.resize(containerSize);
+    for (int i = 0; i < containers.size(); i++) containers[i].resize(containerSize);
+    vector <vector <int>> attractorContainer;
+    attractorContainer.clear();
+    
+    // setting attraction points
+    int counter = 0;
+    while (attractors.size() < _noOfAttractors && counter < _noOfAttractors * 2)
+    {
+        // create new attractor
+        float distance = ofRandom(leafRadius * 0.2, leafRadius - nodeRadius);
+        float angle = ofRandom(ofDegToRad(360));
+        float x = cos(angle) * distance;
+        float y = sin(angle) * distance;
+        
+        // checking position of new attractor
+        int nodeX = floor(ofMap(x, -leafRadius, leafRadius, 0, containerSize));
+        int nodeY = floor(ofMap(y, -leafRadius, leafRadius, 0, containerSize));
+
+        bool addToAttractors = true;
+        for (int i = nodeX - 1; i <= nodeX + 1; i++)
+            if (addToAttractors)
+                for (int j = nodeY - 1; j <= nodeY + 1; j++)
+                    if (addToAttractors)
+                        if (i >= 0 && i < containers.size() && j >= 0 && j < containers[i].size())
+                            if (containers[i][j].size() > 0)
+                                for (int k = 0; k < containers[i][j].size(); k++)
+                                    if (addToAttractors)
+                                    {
+                                        ofVec2f attractor = attractors[containers[i][j][k]];
+                                        float dist = ofDist(x, y, attractor.x, attractor.y);
+                                        if (dist < nodeRadius * 2) addToAttractors = false;
+                                    }
+        // adding new attractor
+        if (addToAttractors)
+        {
+            containers[nodeX][nodeY].push_back(attractors.size());
+            attractors.push_back(ofVec2f(x, y));
+            attractorContainer.push_back(vector <int> {nodeX, nodeY});
+        }
+        counter++;
+    }
+
+    // setting up containers
+    containers.clear();
     containers.resize(containerSize);
     for (int i = 0; i < containers.size(); i++) containers[i].resize(containerSize);
     
@@ -120,17 +104,20 @@ void Venation2DClosed::update()
 {
     if (!initial) attractorCheck();
     generateRng();
-//    if (!initial) newNodesPositionCheck();
     generateNewNodes();
-    if (attractors.empty() && addStrayLines) fixStrayLines();
-    if (optimizeNodes) removeCloseNodes();
+    if (attractors.empty() && optimizeNodes)
+    {
+        removeCloseNodes();
+        finalRng();
+        optimizeNodes = false;
+    }
     initial = false;
 }
 
 void Venation2DClosed::draw()
 {
     // draw containers
-    ofSetColor(100);
+    ofSetColor(50);
     for (int i = 0; i <= containerSize; i++)
         for (int j = 0; j <= containerSize; j++)
         {
@@ -157,25 +144,24 @@ void Venation2DClosed::draw()
     for (int i = 0; i < attractors.size(); i++) ofDrawCircle(attractors[i].x, attractors[i].y, nodeRadius);
     
     // draw nodes in containers based on RGB (R for X, G for Y, B for Z)
-//    ofSetColor(255);
-//    ofFill();
-//    for (int i = 0; i < containers.size(); i++)
-//        for (int j = 0; j < containers[i].size(); j++)
-//            if (!containers[i][j].empty())
-//                for (int k = 0; k < containers[i][j].size(); k++)
-//                {
-//                    ofSetColor((255 / containers.size()) * i, (255 / containers[i].size()) * j, 0);
-//                    int index = containers[i][j][k];
-//                    ofDrawCircle(nodes[index].x, nodes[index].y, nodeRadius);
-//                }
+    ofFill();
+    for (int i = 0; i < containers.size(); i++)
+        for (int j = 0; j < containers[i].size(); j++)
+            if (!containers[i][j].empty())
+                for (int k = 0; k < containers[i][j].size(); k++)
+                {
+                    ofSetColor((255 / containers.size()) * i, (255 / containers[i].size()) * j, 0, 150);
+                    int index = containers[i][j][k];
+                    ofDrawCircle(nodes[index].x, nodes[index].y, nodeRadius);
+                }
     
     // draw optimized nodes
     ofFill();
-    ofSetColor(0, 255, 0, 100);
+    ofSetColor(0, 0, 255, 50);
     for (int i = 0; i < nodesOptimized.size(); i++) ofDrawCircle(nodesOptimized[i].x, nodesOptimized[i].y, nodeRadius);
     
     // draw deleted nodes
-    ofSetColor(255, 0, 0, 100);
+    ofSetColor(255, 0, 0, 50);
     for (int i = 0; i < nodesDeleted.size(); i++) ofDrawCircle(nodesDeleted[i].x, nodesDeleted[i].y, nodeRadius);
 
     // draw nodes
@@ -187,17 +173,17 @@ void Venation2DClosed::draw()
     ofSetColor(255, 255, 0);
     ofPushStyle();
     for (int i = 0; i < branches.size(); i++)
-        branches[i].draw(nodes, 8);
+        branches[i].draw(nodesOptimized, 8);
     ofPopStyle();
     
     // draw tree lines
     ofSetColor(0, 255, 255);
     ofPushStyle();
-    ofSetLineWidth(5);
+    ofSetLineWidth(4);
     for (int i = 0; i < lines.size(); i++)
     {
-        if (i < newLinesIndex) ofSetColor(0, 255, 255, 100);
-        else ofSetColor(255, 150, 0, 100);
+        if (i < newLinesIndex) ofSetColor(0, 255, 255);
+        else ofSetColor(255, 150, 0);
         ofVec2f a = nodes[lines[i][0]];
         ofVec2f b = nodes[lines[i][1]];
         ofDrawLine(a.x, a.y, b.x, b.y);
@@ -205,10 +191,11 @@ void Venation2DClosed::draw()
     ofPopStyle();
     
     // draw RNG
+    ofSetLineWidth(2);
     ofSetColor(0, 100, 255);
     ofVec2f v, w;
     int nSize = tempNodesSize; //because the nodes vector has grown since last RNG
-    
+
     for (int i = 0; i < rngSize; i++)
         for (int j = 0; j < i; j++)
             if (rng[i][j])
@@ -237,12 +224,25 @@ void Venation2DClosed::draw()
             }
     
     //draw RNG growth lines
+    ofSetLineWidth(1);
     ofSetColor(0, 150, 0);
     if (nodeNeighbors.size() > 0)
         for (int i = 0; i < nodeNeighbors.size(); i++)
             if (nodeNeighbors[i].size() > 0)
                 for (int j = 0; j < nodeNeighbors[i].size(); j++)
                     ofDrawLine(nodes[i].x, nodes[i].y, attractors[nodeNeighbors[i][j]].x, attractors[nodeNeighbors[i][j]].y);
+    
+    // draw optimized RNG
+    ofSetColor(255, 0, 0);
+    if (rngOptimized.size() > 0)
+        for (int i = 0; i < rngOptimized.size(); i++)
+            for (int j = 0; j < i; j++)
+                if (rngOptimized[i][j])
+                {
+                    v = nodesOptimized[i];
+                    w = nodesOptimized[j];
+                    ofDrawLine(v.x, v.y, w.x, w.y);
+                }
 }
 
 void Venation2DClosed::attractorCheck()
@@ -393,17 +393,6 @@ void Venation2DClosed::generateNewNodes()
     newLinesIndex = nodes.size();
     for (int i = 0; i < newLines.size(); i++) lines.push_back(newLines[i]);
     
-    // setting up the branch structure
-    if (nodes.size() < 12)
-        for (int i = 0; i < lines.size(); i++)
-            if (lines[i][0] == 0)
-            {
-                Branch b;
-                b.addExtension(lines[i]);
-                branches.push_back(b);
-                currentBranches.push_back(b);
-            }
-    
     //putting nodes in containers
     newNodesIndex = nodes.size();
     for (int i = 0; i < newNodes.size(); i++)
@@ -414,38 +403,6 @@ void Venation2DClosed::generateNewNodes()
         nodeContainer.push_back(vector <int> {nodeX, nodeY});
         nodes.push_back(newNodes[i]);
     }
-}
-
-void Venation2DClosed::fixStrayLines()
-{
-    for (int i = 0; i < nodeNeighbors.size(); i++)
-        if (!(find(strayLinesNodesIndex.begin(), strayLinesNodesIndex.end(), i) != strayLinesNodesIndex.end())) // if strayLinesNodesIndex doesn't contain i
-//            if (nodeNeighbors[i].size() == 0)
-            {
-                bool addTostrayLinesNodesIndex = false;
-                for (int j = 0; j < nodeNodeNeighbors[i].size(); j++)
-                {
-                    if (!(find(lines.begin(), lines.end(), vector <int> {i, nodeNodeNeighbors[i][j]}) != lines.end()))
-                        if (!(find(lines.begin(), lines.end(), vector <int> {nodeNodeNeighbors[i][j], i}) != lines.end()))
-//                    float dist = ofDist(nodes[i].x, nodes[i].y, nodes[nodeNodeNeighbors[i][j]].x, nodes[nodeNodeNeighbors[i][j]].y);
-//                    if (abs(fmod(dist, nodeRadius * 2)) > 0.1)
-//                    if (dist != nodeRadius * 2)
-//                    if (dist < nodeRadius * 2 || dist > nodeRadius * 2)
-                    if (!(find(strayLines.begin(), strayLines.end(), vector <int> {i, nodeNodeNeighbors[i][j]}) != strayLines.end()))
-                            if (!(find(strayLines.begin(), strayLines.end(), vector <int> {nodeNodeNeighbors[i][j], i}) != strayLines.end()))
-                            {
-                                vector <int> newLine;
-                                newLine.push_back(i);
-                                newLine.push_back(nodeNodeNeighbors[i][j]);
-                                strayLines.push_back(newLine);
-                                addTostrayLinesNodesIndex = true;
-                            }
-                }
-//                if (addTostrayLinesNodesIndex) strayLinesNodesIndex.push_back(i);
-            }
-        for (int i = 0; i < strayLines.size(); i++) lines.push_back(strayLines[i]);
-        addStrayLines = false;
-        optimizeNodes = true;
 }
 
 void Venation2DClosed::removeCloseNodes()
@@ -517,7 +474,151 @@ void Venation2DClosed::removeCloseNodes()
         containersOptimized[nodeX][nodeY].push_back(i);
         nodeContainerOptimized.push_back(vector <int> {nodeX, nodeY});
     }
+}
+
+void Venation2DClosed::finalRng()
+{
+//    vector <vector <int>> linesOptimized;
+//    vector <vector <bool>> rngOptimized;
+    int size = nodesOptimized.size();
+    float pairDist[size][size];
+    rngOptimized.resize(size);
     
-    optimizeNodes = false;
-    cout << nodes.size() << "-" << nodeContainer.size() << "-" << nodesOptimized.size() << "-" << nodeContainerOptimized.size() << endl;
+    // 1. getting pair distances
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j <= i; j++)
+        {
+            if (i == j) pairDist[i][j] = 0;
+            else
+            {
+                float d = ofDist(nodesOptimized[i].x, nodesOptimized[i].y, nodesOptimized[j].x, nodesOptimized[j].y);
+                pairDist[i][j] = d;
+                pairDist[j][i] = d;
+            }
+        }
+    
+    // 2. getting max distances for each pair
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            if (i != j)
+            {
+                bool relativeNeighborhood = true;
+                float ijDist = pairDist[i][j];
+                for (int k = 0; k < size; k++)
+                    if (i != k && j != k)
+                    {
+                        float maxDist = max(pairDist[i][k], pairDist[j][k]);
+                        // 3. checking if there is a distance smaller than the pair distance
+                        if (maxDist < ijDist)
+                        {
+                            relativeNeighborhood = false;
+                            break;
+                        }
+                    }
+                rngOptimized[i].push_back((relativeNeighborhood) ? true : false);
+            }
+            else rngOptimized[i].push_back(false);
+    
+    containersLinesOptimized.resize(containerSize);
+    for (int i = 0; i < containersLinesOptimized.size(); i++) containersLinesOptimized[i].resize(containerSize);
+    
+    if (rngOptimized.size() > 0)
+        for (int i = 0; i < rngOptimized.size(); i++)
+            for (int j = 0; j < i; j++)
+                if (rngOptimized[i][j])
+                {
+                    // setting up the line containers
+                    ofVec2f iNode = nodesOptimized[i];
+                    ofVec2f jNode = nodesOptimized[j];
+                    ofVec2f mNode = (iNode + jNode) / 2;
+                    int nodeX = floor(ofMap(mNode.x, -leafRadius, leafRadius, 0, containerSize));
+                    int nodeY = floor(ofMap(mNode.y, -leafRadius, leafRadius, 0, containerSize));
+                    containersLinesOptimized[nodeX][nodeY].push_back(linesOptimized.size());
+                    lineContainer.push_back(vector <int> {nodeX, nodeY});
+                    
+                    // creating new lines
+                    vector<int> newLine;
+                    newLine.push_back(i);
+                    newLine.push_back(j);
+                    linesOptimized.push_back(newLine);
+                }
+    
+    // setting up the branch structure
+    
+    // initializing with the initial node
+    vector <bool> branchedLines;
+    branchedLines.clear();
+    branchedLines.resize(linesOptimized.size(), false);
+    
+    int mei = nodeContainerOptimized[0][0];
+    int mej = nodeContainerOptimized[0][1];
+    for (int i = mei - 1; i <= mei + 1; i++)
+        for (int j = mej - 1; j <= mej + 1; j++)
+            if (i >= 0 && i < containersLinesOptimized.size() && j >= 0 && j < containersLinesOptimized[i].size())
+                if (containersLinesOptimized[i][j].size() > 0)
+                    for (int k = 0; k < containersLinesOptimized[i][j].size(); k++)
+                    {
+                        int index = containersLinesOptimized[i][j][k];
+                        if (!branchedLines[index])
+                        {
+                            bool flip = false;
+                            bool addToBranch = false;
+                            if (linesOptimized[index][0] == 0)
+                            {
+                                addToBranch = true;
+                            }
+                            else if (linesOptimized[index][1] == 0)
+                            {
+                                addToBranch = true;
+                                flip = true; // to check the line direction
+                            }
+                            
+                            if (addToBranch)
+                            {
+                                Branch b;
+                                b.addExtension(flip ? vector <int> {linesOptimized[index][1], linesOptimized[index][0]} : linesOptimized[index]);
+                                branches.push_back(b);
+                                currentBranches.push_back(b);
+                                branchedLines[index] = true;
+                            }
+                        }
+                    }
+    
+    // adding the rest of the branches
+    
+//    for (int n = 0; n < currentBranches.size(); n++)
+//    int mei = nodeContainerOptimized[0][0];
+//    int mej = nodeContainerOptimized[0][1];
+//    for (int i = mei - 1; i <= mei + 1; i++)
+//        for (int j = mej - 1; j <= mej + 1; j++)
+//            if (i >= 0 && i < containersLinesOptimized.size() && j >= 0 && j < containersLinesOptimized[i].size())
+//                if (containersLinesOptimized[i][j].size() > 0)
+//                    for (int k = 0; k < containersLinesOptimized[i][j].size(); k++)
+//                    {
+//                        int index = containersLinesOptimized[i][j][k];
+//                        if (!branchedLines[index])
+//                        {
+//                            bool flip = false;
+//                            bool addToBranch = false;
+//                            if (linesOptimized[index][0] == 0)
+//                            {
+//                                addToBranch = true;
+//                            }
+//                            else if (linesOptimized[index][1] == 0)
+//                            {
+//                                addToBranch = true;
+//                                flip = true; // to check the line direction
+//                            }
+//
+//                            if (addToBranch)
+//                            {
+//                                Branch b;
+//                                b.addExtension(flip ? vector <int> {linesOptimized[index][1], linesOptimized[index][0]} : linesOptimized[index]);
+//                                branches.push_back(b);
+//                                currentBranches.push_back(b);
+//                                branchedLines[index] = true;
+//                            }
+//                        }
+//                    }
+
 }
