@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Branch.h"
 
 class Venation2DClosed {
     
@@ -12,46 +11,41 @@ public:
     
 private:
     void attractorCheck();
+    void nodePassedCheck();
     void generateRng();
     void generateNewNodes();
-    void fixStrayLines();
-    void removeCloseNodes();
-    void finalRng();
+    void calculateThickness();
+    void finalRngStructure();
     
+    int progressCounter;
     int leafRadius;
     int nodeRadius;
     int rngSize;
     int tempNodesSize;
     int newLinesIndex;
-    int newNodesIndex;
-    int containerSize;
+    int containerNum;
     float containerLength;
     
     bool initial;
-    bool optimizeNodes;
+    bool finalize;
 
-    vector <ofVec2f> attractors;
-    vector <ofVec2f> attractorsOriginal;
-    vector <ofVec2f> nodes;
-    vector <ofVec2f> nodesOptimized;
-    vector <ofVec2f> nodesDeleted;
+    vector <bool> hasChildren;
     
-    vector <int> strayLinesNodesIndex;
-    vector <vector <int>> strayLines;
-    vector <vector <int>> nodeContainer;
-    vector <vector <int>> nodeContainerOptimized;
+    vector <ofVec2f> attractors;
+    vector <ofVec2f> nodes;
+    
+    vector <int> attractorIndices;
+    vector <int> nodeParents;
+    vector <int> nodeThickness;
+    vector <int> passedNodes;
     vector <vector <int>> lines;
-    vector <vector <int>> linesOptimized;
+    vector <vector <int>> finalLines;
+    vector <vector <int>> nodeContainer;
+    vector <vector <int>> attractorContainer;
     vector <vector <int>> lineContainer;
     vector <vector <int>> nodeNeighbors;
     vector <vector <int>> attractorNeighbors;
-    vector <vector <int>> nodeNodeNeighbors;
-    vector <vector <bool>> rng;
-    vector <vector <bool>> rngOptimized;
+    vector <vector <int>> passedContainers;
     vector <vector <vector <int>>> containers;
-    vector <vector <vector <int>>> containersOptimized;
-    vector <vector <vector <int>>> containersLinesOptimized;
-    
-    vector <Branch> branches;
-    vector <Branch> currentBranches;
+    vector <vector <vector <int>>> containersAttractors;
 };

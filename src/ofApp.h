@@ -8,7 +8,6 @@
 #include "Venation3DOpen.h"
 #include "Venation3DClosed.h"
 #include "BranchMesh.h"
-#include "Branch.h"
 #include "ofxRayTriangleIntersection.h"
 
 class ofApp : public ofBaseApp{
