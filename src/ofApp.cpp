@@ -4,12 +4,12 @@
 void ofApp::setup(){
     ofBackground(0);
     ofSetCircleResolution(60);
-//    ofSetSphereResolution(4);
+    ofSetSphereResolution(8);
     
-//    ofEnableDepthTest();
+    ofEnableDepthTest();
+    ofEnableAlphaBlending();
     ofSetVerticalSync(true);
     cam.setDistance(400);
-    
     
     // set lights
     dirLight1.setDiffuseColor(ofColor(255, 100, 100));
@@ -25,18 +25,16 @@ void ofApp::setup(){
     dirLight6.setDiffuseColor(ofColor(50, 50, 100));
     dirLight6.setDirectional();
     
-//    v.setup(240, 2, 1200);
+//    v.setup(100, 2, 1200);
     v.setup(100, 2, 480);
 //    v.setup(50, 2, 20);
     run = false;
     
     // model test
-//    model.loadModel("Geometry Test 1.obj");
     model.loadModel("Geometry Test 1.obj");
-    min = model.getSceneMin();
-    max = model.getSceneMax();
     modelMesh = model.getMesh(0);
     
+    // get bounding box
     float minX =   std::numeric_limits<float>::max();
     float maxX = - std::numeric_limits<float>::max();
     float minY =   std::numeric_limits<float>::max();
@@ -59,27 +57,10 @@ void ofApp::setup(){
     boundingBox.set(maxX - minX, maxY - minY, maxZ - minZ);
     boundingBox.setPosition((maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2);
     
-    // STL test
-    stl.loadSTL(ofToDataPath("Geometry Test 1 Binary.stl"));
-    auto facets = stl.getFacets();
-    
-    // mesh test
-    m.setup(ofVec3f(10, 10, 0), ofVec3f(20, 30, 40), 6, 10, 20);
-    
     // raycasting
-//    for (int i = 0; i < facets.size(); i++)
-//    for (int i = facets.size() / 30; i < facets.size() / 20; i++)
-//    {
-//        FaceTri tri;
-//        auto f = facets[i];
-//        tri.v0 = ofPoint(f.vert1);
-//        tri.v1 = ofPoint(f.vert2);
-//        tri.v2 = ofPoint(f.vert3);
-//        tris.push_back(tri);
-//    }
-//
-    auto xxx =  modelMesh.getUniqueFaces();
     int faceNum = modelMesh.getUniqueFaces().size();
+    
+    // input mesh faces
     for (int i = 0; i < faceNum; i++)
          {
              auto face = modelMesh.getFace(i);
@@ -94,75 +75,61 @@ void ofApp::setup(){
              tris.push_back(tri);
          }
     
-//    Ray ray;
-//    ray.rayOrig.set(0, 0, 2000);
-//    ray.rayEnd.set(0, 0, -2000);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(1, 1, 2000);
-//    ray.rayEnd.set(1, 1, -2000);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(5, 5, 2000);
-//    ray.rayEnd.set(5, 5, -2000);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(10, 10, 2000);
-//    ray.rayEnd.set(10, 10, -2000);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(-20, -20, 2000);
-//    ray.rayEnd.set(200, 200, -2000);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(30, 30, 2000);
-//    ray.rayEnd.set(30, 30, -2000);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(0, 0, 2000);
-//    ray.rayEnd.set(0, 0, 10);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(5, 5, 2000);
-//    ray.rayEnd.set(5, 5, 20);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(10, 10, 2000);
-//    ray.rayEnd.set(10, 10, 30);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(-20, -20, 2000);
-//    ray.rayEnd.set(200, 200, 40);
-//    rays.push_back(ray);
-//    ray.rayOrig.set(30, 30, 2000);
-//    ray.rayEnd.set(30, 30, 0);
-//    rays.push_back(ray);
+    int num = 20;
+    for (int i = 0; i < num; i ++)
+    {
+        rays.clear();
+        float x = ofRandom(minX, maxX);
+        float y = ofRandom(minY, maxY);
+        float z = ofRandom(minZ, maxZ);
+        ofVec3f dir = ofVec3f(ofRandom(1), ofRandom(1), ofRandom(1));
+        dir.normalize();
+        dir *= (maxX - minX) + (maxY - minY) + (maxZ - minZ);
+        Ray ray;
+        ray.rayOrig.set(x, y, z);
+        ray.rayEnd.set(x + dir.x, y + dir.y, z + dir.z);
+        rays.push_back(ray);
+        auto results = rtIntersect.checkMeshIntersection(rays, tris);
+        if (results.size() % 2 == 1) pIn.push_back(ofVec3f(x, y, z));
+        else pOut.push_back(ofVec3f(x, y, z));
+    }
     
-//    rtIntersect.checkMeshIntersection(rays, tris);
-//
-//    auto x = rtIntersect.checkMeshIntersection(rays, tris);
-//    if (x.size() > 0)
-//    {
-//        cout << x.size() << x[0].bIntersect << x[1].bIntersect << x[2].bIntersect << x[3].bIntersect << x[4].bIntersect << endl;
-//    }
+//    ofxCsv csvRecorder;
+//    csvRecorder.clear();
+//    ofxCsvRow row;
+//    row.setInt(0, 876);
+//    row.setInt(1, 543);
+//    csvRecorder.addRow(row);
+//    row.setString(0, "hello");
+//    row.setString(1, "hi");
+//    row.setString(2, "hey there");
+//    row.setInt(3, 456);
+//    row.setInt(0, 79);
+//    row.setString(6, "me");
+//    csvRecorder.addRow(row);
+//    string d = "Data";
+//    int w = 143;
+//    d.append(ofToString(w));
+//    d.append(".csv");
+//    csvRecorder.save(d);
     
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    dirLight1.setPosition(-100, 0, 0);
-    dirLight1.lookAt(ofVec3f(0, 0, 0));
-    dirLight2.setPosition(0, -100, 0);
-    dirLight2.lookAt(ofVec3f(0, 0, 0));
-    dirLight3.setPosition(0, 0, -100);
-    dirLight3.lookAt(ofVec3f(0, 0, 0));
-    dirLight4.setPosition(100, 0, 0);
-    dirLight4.lookAt(ofVec3f(0, 0, 0));
-    dirLight5.setPosition(0, 100, 0);
-    dirLight5.lookAt(ofVec3f(0, 0, 0));
-    dirLight6.setPosition(0, 0, 100);
-    dirLight6.lookAt(ofVec3f(0, 0, 0));
+//    dirLight1.setPosition(-100, 0, 0);
+//    dirLight1.lookAt(ofVec3f(0, 0, 0));
+//    dirLight2.setPosition(0, -100, 0);
+//    dirLight2.lookAt(ofVec3f(0, 0, 0));
+//    dirLight3.setPosition(0, 0, -100);
+//    dirLight3.lookAt(ofVec3f(0, 0, 0));
+//    dirLight4.setPosition(100, 0, 0);
+//    dirLight4.lookAt(ofVec3f(0, 0, 0));
+//    dirLight5.setPosition(0, 100, 0);
+//    dirLight5.lookAt(ofVec3f(0, 0, 0));
+//    dirLight6.setPosition(0, 0, 100);
+//    dirLight6.lookAt(ofVec3f(0, 0, 0));
     if (run) v.update();
-    
-    // raycasting
-//    rays.at(0).rayOrig.set(ofGetWidth() / 2, ofGetHeight() / 2, 0);
-//    rays.at(0).rayEnd.set(ofGetWidth() / 2, ofGetHeight() / 2, -2000);
-////    rays.at(0).rayOrig.set(mouseX, mouseY, 0);
-////    rays.at(0).rayEnd.set(mouseX, mouseY, -2000);
-//    ofVec3f rayDir = rays.at(0).rayEnd;
-//    rayDir -= rays.at(0).rayOrig;
-//    rtIntersect.checkMeshIntersection(rays, tris);
 }
 
 //--------------------------------------------------------------
@@ -177,30 +144,34 @@ void ofApp::draw(){
     cam.begin();
     
     // venation
-    v.draw();
+//    v.draw();
     
     //raycasting
-    rtIntersect.drawDebug();
+//    rtIntersect.drawDebug();
 //    rtIntersect.drawRayDebug();
-//    auto x = rtIntersect.checkMeshIntersection(rays, tris);
-//    if (x.size() > 0) cout << x.size() << x[0].bIntersect << x[1].bIntersect << x[2].bIntersect << endl;
 
     // bounding box
 //    boundingBox.drawWireframe();
-
-    // model
-//    ofSetColor(255, 255, 255);
-//    model.draw(OF_MESH_WIREFRAME);
-
-    // mesh of the model
+//
+//    // model
+////    ofSetColor(255, 255, 255);
+////    model.draw(OF_MESH_WIREFRAME);
+//
+//    // mesh of the model
 //    ofSetColor(255, 0, 0);
 //    modelMesh.drawWireframe();
-
-    // stl
-//    ofSetColor(0, 255, 0);
-//    stl.drawWireFrame();
-//    cen = stl.getModelCenter();
-
+//
+//    // drawing points
+//    ofPushStyle();
+//    ofFill();
+//    ofSetColor(0, 255, 255);
+//    for (int i = 0; i < pIn.size(); i++)
+//        ofDrawSphere(pIn[i].x, pIn[i].y, pIn[i].z, 0.2);
+//    ofSetColor(255, 0, 0);
+//    for (int i = 0; i < pOut.size(); i++)
+//        ofDrawSphere(pOut[i].x, pOut[i].y, pOut[i].z, 0.2);
+//    ofPopStyle();
+    
     // draw axes
     ofSetColor(255, 0, 0);
     ofDrawLine(0, 0, 0, 100, 0, 0);
@@ -223,7 +194,8 @@ void ofApp::keyPressed(int key){
 //        v.setup(50, 2, 20);
         cam.reset();
     }
-    if (key == 's')
+    if (key == 's') v.saveFile();
+    if (key == 'p')
     {
         screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
         screen.save("ScreenCapture_" + ofGetTimestampString() + ".jpg");

@@ -1,14 +1,16 @@
 #pragma once
 
-#include "ofxAssimpModelLoader.h"
-#include "ofxSTL.h"
 #include "ofMain.h"
+
 #include "Venation2DOpen.h"
 #include "Venation2DClosed.h"
 #include "Venation3DOpen.h"
 #include "Venation3DClosed.h"
 #include "BranchMesh.h"
+
+#include "ofxAssimpModelLoader.h"
 #include "ofxRayTriangleIntersection.h"
+#include "ofxCsv.h"
 
 class ofApp : public ofBaseApp{
 
@@ -34,9 +36,9 @@ private:
     ofLight dirLight1, dirLight2, dirLight3, dirLight4, dirLight5, dirLight6;
 
 //    Venation2DOpen v;
-    Venation2DClosed v;
+//    Venation2DClosed v;
 //    Venation3DOpen v;
-//    Venation3DClosed v;
+    Venation3DClosed v;
     
     bool run;
     ofImage screen;
@@ -45,16 +47,13 @@ private:
     
     // mesh
     ofxAssimpModelLoader model;
-    ofPoint p, min, max, cen;
     ofMesh modelMesh;
-    
-    // stl
-    ofxSTLImporter stl;
-    ofxSTLExporter stlExp;
     ofBoxPrimitive boundingBox;
     
     // raycasting
-    ofxRayTriangleIntersection  rtIntersect;
-    vector<FaceTri>             tris;
-    vector<Ray>                 rays;
+    ofxRayTriangleIntersection rtIntersect;
+    vector <FaceTri> tris;
+    vector <Ray> rays;
+    vector <ofVec3f> pIn;
+    vector <ofVec3f> pOut;
 };

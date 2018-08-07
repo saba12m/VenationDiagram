@@ -25,6 +25,7 @@ private:
     int newLinesIndex;
     int containerNum;
     float containerLength;
+    float containerDist;
     
     bool initial;
     bool finalize;
@@ -42,7 +43,6 @@ private:
     vector <vector <int>> finalLines;
     vector <vector <int>> nodeContainer;
     vector <vector <int>> attractorContainer;
-    vector <vector <int>> lineContainer;
     vector <vector <int>> nodeNeighbors;
     vector <vector <int>> attractorNeighbors;
     vector <vector <int>> passedContainers;

@@ -15,7 +15,6 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     finalLines.clear();
     nodeContainer.clear();
     attractorContainer.clear();
-    lineContainer.clear();
     nodeNeighbors.clear();
     attractorNeighbors.clear();
     passedContainers.clear();
@@ -25,7 +24,7 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     progressCounter = 0;
     leafRadius = _leafRadius;
     nodeRadius = _nodeRadius;
-
+    
     initial = true;
     finalize = true;
     
@@ -35,13 +34,14 @@ void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     nodeParents.push_back(-1); // meaning it doesn't have a parent
     
     // setting up the container size
-    containerNum = (int) leafRadius / (nodeRadius * 4.0);
+    containerNum = (int) sqrt(_noOfAttractors / 12);
     containerLength = (float) leafRadius * 2 / (float) containerNum;
     while (containerLength < nodeRadius * 2) // just in case the container sizes are larger than the nodes
     {
         containerLength * 2;
         containerNum / 2;
     }
+    containerDist = containerLength * 2.0; // change if more dispersed
     
     // setting up attractor containers
     containersAttractors.resize(containerNum);
@@ -156,7 +156,6 @@ void Venation2DClosed::draw()
                 {ofFill();
                     int index = containers[i][j][k];
                     float r = (nodeThickness.size() > 0) ? nodeThickness[index] / 2.0 : nodeRadius;
-                    float blue = (hasChildren.size() > 0) ? !hasChildren[index] * 255 : 0;
                     ofSetColor((255 / containers.size()) * i, (255 / containers[i].size()) * j, 0);
                     ofDrawCircle(nodes[index].x, nodes[index].y, r);
                     ofNoFill();
@@ -277,8 +276,7 @@ void Venation2DClosed::generateRng()
             int attractorX = attractorContainer[j][0];
             int attractorY = attractorContainer[j][1];
             
-            float continerDist = containerNum * containerLength / 4.0;
-            if (abs(nodeX - attractorX) <  continerDist && abs(nodeY - attractorY) < continerDist)
+            if (abs(nodeX - attractorX) <  containerDist && abs(nodeY - attractorY) < containerDist)
             {
                 for (int k = 0; k < nSize + aSize; k++)
                     if (i != k && j + nSize != k)
@@ -319,10 +317,8 @@ void Venation2DClosed::generateNewNodes()
 {
     newLinesIndex = lines.size();
     vector <ofVec2f> newNodes;
-    vector <int> newNodeParents;
-    vector <vector <int>> newLines;
     ofVec2f newNode;
-    ofVec2f attractorNode;
+    ofVec2f attractionDist;
     vector <int> newLine;
     int n = nodes.size();
     for (int i = 0 ; i < n; i++)
@@ -332,15 +328,13 @@ void Venation2DClosed::generateNewNodes()
         if (nodeAttractorSize > 0)
         {
             newLine.push_back(i);
-            newNodeParents.push_back(i);
             for (int j = 0; j < nodeAttractorSize; j++)
             {
-                attractorNode = attractors[nodeNeighbors[i][j]] - nodes[i];
-                if (attractorNode.length() < nodeRadius * 2) break;
-                attractorNode.normalize();
-                newNode += attractorNode;
+                attractionDist = attractors[nodeNeighbors[i][j]] - nodes[i];
+                attractionDist.normalize();
+                newNode += attractionDist;
             }
-            if (newNode.length() < nodeRadius * 0.5) newNode = attractorNode;
+            if (newNode.length() < nodeRadius * 0.5) newNode = attractionDist;
             newNode.normalize();
             newNode *= nodeRadius * 2;
             newNode += nodes[i];
@@ -416,8 +410,7 @@ void Venation2DClosed::finalRngStructure()
             int iNodeY = nodeContainer[i][1];
             int jNodeX = nodeContainer[j][0];
             int jNodeY = nodeContainer[j][1];
-            float continerDist = containerNum * containerLength / 4.0;
-            if (abs(iNodeX - jNodeX) <  continerDist && abs(iNodeY - jNodeY) < continerDist)
+            if (abs(iNodeX - jNodeX) <  containerDist && abs(iNodeY - jNodeY) < containerDist)
             {
                 for (int k = 0; k < nodes.size(); k++)
                     if (i != k && j != k)

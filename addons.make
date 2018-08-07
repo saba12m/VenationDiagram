@@ -1,3 +1,4 @@
 ofxAssimpModelLoader
+ofxCsv
 ofxRayTriangleIntersection
 ofxSTL

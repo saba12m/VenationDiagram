@@ -12,6 +12,7 @@
 		4B13785D5FCD177083F1B7A4 /* ofxSTLExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C5AA75B87DD15F3AD89A671 /* ofxSTLExporter.cpp */; };
 		6835B982A766210442C82753 /* Venation2DOpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2370F3147F087DB5EAACD57 /* Venation2DOpen.cpp */; };
 		68A538B76AD39268E4B795CA /* BranchMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80E61B91D73122D805F66054 /* BranchMesh.cpp */; };
+		77699BF6BD81647F909A0009 /* ofxCsv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFECE002FA2814DBD4904261 /* ofxCsv.cpp */; };
 		8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDE55D82BD962DAC0E94B708 /* ofxAssimpModelLoader.cpp */; };
 		95EA515D9EB4B0BE1C6A0912 /* Venation3DClosed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 167FAA893945EE9045D819A5 /* Venation3DClosed.cpp */; };
 		A78E8490FE2F17D5D20E9FC9 /* Venation2DClosed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D32D2BB3B888B54AB8F02810 /* Venation2DClosed.cpp */; };
@@ -20,6 +21,7 @@
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 		E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */; };
+		EE4D1E14E6E3D28AB35B1BB3 /* ofxCsvRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E1BE77F4732248CB1EDDF29 /* ofxCsvRow.cpp */; };
 		F0CAF5EED84E6071307F8D90 /* ofxSTLImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F6F54ECFA5E5E6990A390E8 /* ofxSTLImporter.cpp */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +58,7 @@
 		017D74D89F5586D95688F803 /* ofxRayTriangleIntersection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxRayTriangleIntersection.h; path = ../../../addons/ofxRayTriangleIntersection/src/ofxRayTriangleIntersection.h; sourceTree = SOURCE_ROOT; };
 		03C874877E05426CB9B7F4FB /* Venation3DClosed.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Venation3DClosed.h; path = src/Venation3DClosed.h; sourceTree = SOURCE_ROOT; };
 		0C5AA75B87DD15F3AD89A671 /* ofxSTLExporter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxSTLExporter.cpp; path = ../../../addons/ofxSTL/src/ofxSTLExporter.cpp; sourceTree = SOURCE_ROOT; };
+		0E1BE77F4732248CB1EDDF29 /* ofxCsvRow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxCsvRow.cpp; path = ../../../addons/ofxCsv/src/ofxCsvRow.cpp; sourceTree = SOURCE_ROOT; };
 		0E3FB6D73DB6B260295B6855 /* LogStream.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LogStream.hpp; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/LogStream.hpp; sourceTree = SOURCE_ROOT; };
 		13DFB7BBED7DB1FCD4E46C40 /* ofxSTLASCIIWriter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxSTLASCIIWriter.h; path = ../../../addons/ofxSTL/src/utils/ofxSTLASCIIWriter.h; sourceTree = SOURCE_ROOT; };
 		147D961D356624357FD9CF3E /* ofxSTLFacet.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxSTLFacet.h; path = ../../../addons/ofxSTL/src/ofxSTLFacet.h; sourceTree = SOURCE_ROOT; };
@@ -63,6 +66,7 @@
 		17EF23C0D4582EB1F8251BD9 /* ofxSTLBinaryReader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxSTLBinaryReader.h; path = ../../../addons/ofxSTL/src/utils/ofxSTLBinaryReader.h; sourceTree = SOURCE_ROOT; };
 		18D6965F094E05B40B20AFB8 /* IOStream.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IOStream.hpp; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/IOStream.hpp; sourceTree = SOURCE_ROOT; };
 		1B7AEB21F03DE3DBC0244047 /* Venation3DOpen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Venation3DOpen.h; path = src/Venation3DOpen.h; sourceTree = SOURCE_ROOT; };
+		1C82207691E461688320AE63 /* ofxCsvRow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxCsvRow.h; path = ../../../addons/ofxCsv/src/ofxCsvRow.h; sourceTree = SOURCE_ROOT; };
 		1E0BC0CEABC90B611234B3BE /* DefaultIOSystem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DefaultIOSystem.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/DefaultIOSystem.h; sourceTree = SOURCE_ROOT; };
 		1E0C80A97E66F858E3720C91 /* quaternion.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = quaternion.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/quaternion.h; sourceTree = SOURCE_ROOT; };
 		221A6B45269330B270549CB3 /* texture.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = texture.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/texture.h; sourceTree = SOURCE_ROOT; };
@@ -74,6 +78,7 @@
 		2B629E4DB07A45391A420283 /* importerdesc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = importerdesc.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/importerdesc.h; sourceTree = SOURCE_ROOT; };
 		2D0E60F86AAE5189480D9993 /* ofxSTLBinaryWriter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxSTLBinaryWriter.h; path = ../../../addons/ofxSTL/src/utils/ofxSTLBinaryWriter.h; sourceTree = SOURCE_ROOT; };
 		36068D6C1D6D412786A5C4C1 /* ofxAssimpAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxAssimpAnimation.cpp; path = ../../../addons/ofxAssimpModelLoader/src/ofxAssimpAnimation.cpp; sourceTree = SOURCE_ROOT; };
+		3BAFE2897D2FABE86454A7AD /* ofxCsv.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxCsv.h; path = ../../../addons/ofxCsv/src/ofxCsv.h; sourceTree = SOURCE_ROOT; };
 		3D5F33D66F2F166A4E8EA438 /* cfileio.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cfileio.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/cfileio.h; sourceTree = SOURCE_ROOT; };
 		3DE27F8F3350100A56220776 /* ai_assert.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ai_assert.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/ai_assert.h; sourceTree = SOURCE_ROOT; };
 		41DBF41AB15D7C33CA52C05F /* NullLogger.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NullLogger.hpp; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/NullLogger.hpp; sourceTree = SOURCE_ROOT; };
@@ -131,6 +136,7 @@
 		EDE55D82BD962DAC0E94B708 /* ofxAssimpModelLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxAssimpModelLoader.cpp; path = ../../../addons/ofxAssimpModelLoader/src/ofxAssimpModelLoader.cpp; sourceTree = SOURCE_ROOT; };
 		EED7009D7358802F4D082865 /* Venation3DOpen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Venation3DOpen.cpp; path = src/Venation3DOpen.cpp; sourceTree = SOURCE_ROOT; };
 		EED8C389555EA379BDFA5BD5 /* Logger.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Logger.hpp; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/Logger.hpp; sourceTree = SOURCE_ROOT; };
+		EFECE002FA2814DBD4904261 /* ofxCsv.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxCsv.cpp; path = ../../../addons/ofxCsv/src/ofxCsv.cpp; sourceTree = SOURCE_ROOT; };
 		F0BBBD032D905D92679D83E6 /* ofxAssimpMeshHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxAssimpMeshHelper.h; path = ../../../addons/ofxAssimpModelLoader/src/ofxAssimpMeshHelper.h; sourceTree = SOURCE_ROOT; };
 		F38BBAA2F93DED836503E450 /* pushpack1.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pushpack1.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/Compiler/pushpack1.h; sourceTree = SOURCE_ROOT; };
 		F67FE68E327BEFBD4B777571 /* ofxAssimpMeshHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxAssimpMeshHelper.cpp; path = ../../../addons/ofxAssimpModelLoader/src/ofxAssimpMeshHelper.cpp; sourceTree = SOURCE_ROOT; };
@@ -166,6 +172,17 @@
 			name = ofxSTL;
 			sourceTree = "<group>";
 		};
+		412E4BCA71876A3B006CE76E /* src */ = {
+			isa = PBXGroup;
+			children = (
+				EFECE002FA2814DBD4904261 /* ofxCsv.cpp */,
+				0E1BE77F4732248CB1EDDF29 /* ofxCsvRow.cpp */,
+				3BAFE2897D2FABE86454A7AD /* ofxCsv.h */,
+				1C82207691E461688320AE63 /* ofxCsvRow.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
 		4B42F9B27EA330D8BB16FAC0 /* src */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,6 +205,14 @@
 				EEFDD7AE0009AE6F77EF2A93 /* include */,
 			);
 			name = assimp;
+			sourceTree = "<group>";
+		};
+		5CFAC65997CFC4C36CD009B7 /* ofxCsv */ = {
+			isa = PBXGroup;
+			children = (
+				412E4BCA71876A3B006CE76E /* src */,
+			);
+			name = ofxCsv;
 			sourceTree = "<group>";
 		};
 		5ED0CA546387938F8DD047EA /* utils */ = {
@@ -309,6 +334,7 @@
 			isa = PBXGroup;
 			children = (
 				2C8F245ACBE61E28646C17F2 /* ofxAssimpModelLoader */,
+				5CFAC65997CFC4C36CD009B7 /* ofxCsv */,
 				E2E74F1FADB7F6B0DDF92284 /* ofxRayTriangleIntersection */,
 				3211D1848C111DF8F6501D43 /* ofxSTL */,
 			);
@@ -501,6 +527,8 @@
 				3B8120368B4FCCD80883BAF3 /* ofxAssimpAnimation.cpp in Sources */,
 				B8846EF8E504895A4A9EFEC0 /* ofxAssimpTexture.cpp in Sources */,
 				8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */,
+				77699BF6BD81647F909A0009 /* ofxCsv.cpp in Sources */,
+				EE4D1E14E6E3D28AB35B1BB3 /* ofxCsvRow.cpp in Sources */,
 				4B13785D5FCD177083F1B7A4 /* ofxSTLExporter.cpp in Sources */,
 				F0CAF5EED84E6071307F8D90 /* ofxSTLImporter.cpp in Sources */,
 			);
@@ -553,6 +581,7 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					../../../addons/ofxCsv/src,
 					../../../addons/ofxRayTriangleIntersection/src,
 					../../../addons/ofxSTL/src,
 					../../../addons/ofxSTL/src/utils,
@@ -597,6 +626,7 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					../../../addons/ofxCsv/src,
 					../../../addons/ofxRayTriangleIntersection/src,
 					../../../addons/ofxSTL/src,
 					../../../addons/ofxSTL/src/utils,
@@ -652,6 +682,7 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					../../../addons/ofxCsv/src,
 					../../../addons/ofxRayTriangleIntersection/src,
 					../../../addons/ofxSTL/src,
 					../../../addons/ofxSTL/src/utils,
@@ -707,6 +738,7 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					../../../addons/ofxCsv/src,
 					../../../addons/ofxRayTriangleIntersection/src,
 					../../../addons/ofxSTL/src,
 					../../../addons/ofxSTL/src/utils,
@@ -751,6 +783,7 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					../../../addons/ofxCsv/src,
 					../../../addons/ofxRayTriangleIntersection/src,
 					../../../addons/ofxSTL/src,
 					../../../addons/ofxSTL/src/utils,
@@ -795,6 +828,7 @@
 					../../../addons/ofxAssimpModelLoader/libs/assimp/lib/osx,
 					../../../addons/ofxAssimpModelLoader/libs/assimp/license,
 					../../../addons/ofxAssimpModelLoader/src,
+					../../../addons/ofxCsv/src,
 					../../../addons/ofxRayTriangleIntersection/src,
 					../../../addons/ofxSTL/src,
 					../../../addons/ofxSTL/src/utils,
