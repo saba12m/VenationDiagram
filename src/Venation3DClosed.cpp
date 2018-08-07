@@ -241,7 +241,7 @@ void Venation3DClosed::saveFile()
     csvRecorder.addRow(row);
     string d = "Data";
     int w = 143;
-    d.append(ofToString(w));
+    d.append(ofToString(ofGetFrameNum()));
     d.append(".csv");
     csvRecorder.save(d);
 }

@@ -2,14 +2,14 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofSetWindowTitle("Venation Structure");
     ofBackground(0);
     ofSetCircleResolution(60);
     ofSetSphereResolution(8);
-    
     ofEnableDepthTest();
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
-    cam.setDistance(400);
+    cam.setDistance(200);
     
     // set lights
     dirLight1.setDiffuseColor(ofColor(255, 100, 100));
@@ -30,9 +30,11 @@ void ofApp::setup(){
 //    v.setup(50, 2, 20);
     run = false;
     
-    // model test
-    model.loadModel("Geometry Test 1.obj");
-    modelMesh = model.getMesh(0);
+    // geometry test
+    geometry.loadModel("Test 1 - Geometry.obj");
+    geometryMesh = geometry.getMesh(0);
+    surface.loadModel("Test 1 - Surface.obj");
+    surfaceMesh = surface.getMesh(0);
     
     // get bounding box
     float minX =   std::numeric_limits<float>::max();
@@ -42,7 +44,7 @@ void ofApp::setup(){
     float minZ =   std::numeric_limits<float>::max();
     float maxZ = - std::numeric_limits<float>::max();
     
-    auto verts = modelMesh.getVertices();
+    auto verts = geometryMesh.getVertices();
     for (int i = 0; i < verts.size(); i++)
     {
         auto v = verts[i];
@@ -58,12 +60,11 @@ void ofApp::setup(){
     boundingBox.setPosition((maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2);
     
     // raycasting
-    int faceNum = modelMesh.getUniqueFaces().size();
     
     // input mesh faces
-    for (int i = 0; i < faceNum; i++)
+    for (int i = 0; i < geometryMesh.getUniqueFaces().size(); i++)
          {
-             auto face = modelMesh.getFace(i);
+             auto face = geometryMesh.getFace(i);
 
              FaceTri tri;
              auto v = face.getVertex(0);
@@ -75,44 +76,80 @@ void ofApp::setup(){
              tris.push_back(tri);
          }
     
-    int num = 20;
-    for (int i = 0; i < num; i ++)
-    {
-        rays.clear();
-        float x = ofRandom(minX, maxX);
-        float y = ofRandom(minY, maxY);
-        float z = ofRandom(minZ, maxZ);
-        ofVec3f dir = ofVec3f(ofRandom(1), ofRandom(1), ofRandom(1));
-        dir.normalize();
-        dir *= (maxX - minX) + (maxY - minY) + (maxZ - minZ);
-        Ray ray;
-        ray.rayOrig.set(x, y, z);
-        ray.rayEnd.set(x + dir.x, y + dir.y, z + dir.z);
-        rays.push_back(ray);
-        auto results = rtIntersect.checkMeshIntersection(rays, tris);
-        if (results.size() % 2 == 1) pIn.push_back(ofVec3f(x, y, z));
-        else pOut.push_back(ofVec3f(x, y, z));
-    }
+    // creating points and checking them
+//    int n = 40;
+//    for (int i = 0; i < n; i ++)
+//    {
+//        rays.clear();
+//        float x = ofRandom(minX, maxX);
+//        float y = ofRandom(minY, maxY);
+//        float z = ofRandom(minZ, maxZ);
+//        ofVec3f dir = ofVec3f(ofRandom(1), ofRandom(1), ofRandom(1));
+//        dir.normalize();
+//        dir *= (maxX - minX) + (maxY - minY) + (maxZ - minZ);
+//        Ray ray;
+//        ray.rayOrig.set(x, y, z);
+//        ray.rayEnd.set(x + dir.x, y + dir.y, z + dir.z);
+//        rays.push_back(ray);
+//        auto results = rtIntersect.checkMeshIntersection(rays, tris);
+//        if (results.size() % 2 == 1) pIn.push_back(ofVec3f(x, y, z));
+//        else pOut.push_back(ofVec3f(x, y, z));
+//    }
     
-//    ofxCsv csvRecorder;
-//    csvRecorder.clear();
-//    ofxCsvRow row;
-//    row.setInt(0, 876);
-//    row.setInt(1, 543);
-//    csvRecorder.addRow(row);
-//    row.setString(0, "hello");
-//    row.setString(1, "hi");
-//    row.setString(2, "hey there");
-//    row.setInt(3, 456);
-//    row.setInt(0, 79);
-//    row.setString(6, "me");
-//    csvRecorder.addRow(row);
-//    string d = "Data";
-//    int w = 143;
-//    d.append(ofToString(w));
-//    d.append(".csv");
-//    csvRecorder.save(d);
-    
+//    // surface population
+//    int num = 400;
+//    float totalArea = 0;
+//    vector <float> areas;
+//    areas.clear();
+//    areas.resize(surfaceMesh.getUniqueFaces().size());
+//    // 1. area calculation
+//    for (int i = 0; i < areas.size(); i++)
+//    {
+//        auto face = surfaceMesh.getFace(i);
+//
+//        auto a = face.getVertex(0);
+//        auto b = face.getVertex(1);
+//        auto c = face.getVertex(2);
+//
+//        ofVec3f ab = b - a;
+//        ofVec3f bc = c - b;
+//        float cAngle = ab.angleRad(bc);
+//
+//        float area = 0.5 * ab.length() * bc.length() * sin(cAngle);
+//        totalArea += area;
+//        areas[i] = area;
+//    }
+//
+//    // 2. point distribution
+//    points.clear();
+//    for (int i = 0; i < areas.size(); i++)
+//    {
+//        int triNum = round(num * areas[i] / totalArea);
+//
+//        auto face = surfaceMesh.getFace(i);
+//        auto a = face.getVertex(0);
+//        auto b = face.getVertex(1);
+//        auto c = face.getVertex(2);
+//        ofVec3f ba = a - b;
+//        ofVec3f bc = c - b;
+//
+//        for (int j = 0; j < triNum; j++)
+//        {
+//            float baVar = ofRandom(1.0);
+//            float bcVar = ofRandom(1.0);
+//
+//            // if they go outside the triangle and into the quadrilateral
+//            if (baVar + bcVar > 1.0)
+//            {
+//                float baTemp = baVar;
+//                baVar = 1 - bcVar;
+//                bcVar = 1 - baTemp;
+//            }
+//            ofVec3f p = baVar * ba + bcVar * bc;
+//            p += b;
+//            points.push_back(p);
+//        }
+//    }
 }
 
 //--------------------------------------------------------------
@@ -151,16 +188,20 @@ void ofApp::draw(){
 //    rtIntersect.drawRayDebug();
 
     // bounding box
-//    boundingBox.drawWireframe();
-//
-//    // model
-////    ofSetColor(255, 255, 255);
-////    model.draw(OF_MESH_WIREFRAME);
-//
-//    // mesh of the model
-//    ofSetColor(255, 0, 0);
-//    modelMesh.drawWireframe();
-//
+    boundingBox.drawWireframe();
+
+    // geometry mesh
+    ofSetColor(255, 0, 0);
+    geometryMesh.drawWireframe();
+    
+    // surface mesh
+    ofSetColor(0, 255, 0);
+    surfaceMesh.drawWireframe();
+
+    // drawing points
+//    for (int i = 0; i < points.size(); i++)
+//        ofDrawSphere(points[i].x, points[i].y, points[i].z, 0.4);
+    
 //    // drawing points
 //    ofPushStyle();
 //    ofFill();

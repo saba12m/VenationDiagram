@@ -46,9 +46,13 @@ private:
     BranchMesh m;
     
     // mesh
-    ofxAssimpModelLoader model;
-    ofMesh modelMesh;
+    ofxAssimpModelLoader geometry;
+    ofMesh geometryMesh;
+    ofxAssimpModelLoader surface;
+    ofMesh surfaceMesh;
     ofBoxPrimitive boundingBox;
+    
+    vector <ofVec3f> points;
     
     // raycasting
     ofxRayTriangleIntersection rtIntersect;
