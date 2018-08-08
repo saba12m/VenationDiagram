@@ -181,22 +181,18 @@ void ofApp::draw(){
     cam.begin();
     
     // venation
-//    v.draw();
-    
-    //raycasting
-//    rtIntersect.drawDebug();
-//    rtIntersect.drawRayDebug();
+    v.draw();
 
-    // bounding box
-    boundingBox.drawWireframe();
-
-    // geometry mesh
-    ofSetColor(255, 0, 0);
-    geometryMesh.drawWireframe();
-    
-    // surface mesh
-    ofSetColor(0, 255, 0);
-    surfaceMesh.drawWireframe();
+//    // bounding box
+//    boundingBox.drawWireframe();
+//
+//    // geometry mesh
+//    ofSetColor(255, 0, 0);
+//    geometryMesh.drawWireframe();
+//
+//    // surface mesh
+//    ofSetColor(0, 255, 0);
+//    surfaceMesh.drawWireframe();
 
     // drawing points
 //    for (int i = 0; i < points.size(); i++)

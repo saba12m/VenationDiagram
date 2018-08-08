@@ -128,6 +128,7 @@ void Venation3DClosed::update()
         calculateThickness();
         finalRngStructure();
         finalize = false;
+        saveFile();
     }
     initial = false;
     progressCounter++;
@@ -226,24 +227,51 @@ void Venation3DClosed::draw()
 
 void Venation3DClosed::saveFile()
 {
-    ofxCsv csvRecorder;
-    csvRecorder.clear();
-    ofxCsvRow row;
-    row.setInt(0, 876);
-    row.setInt(1, 543);
-    csvRecorder.addRow(row);
-    row.setString(0, "hello");
-    row.setString(1, "hi");
-    row.setString(2, "hey there");
-    row.setInt(3, 456);
-    row.setInt(0, 79);
-    row.setString(6, "me");
-    csvRecorder.addRow(row);
-    string d = "Data";
-    int w = 143;
-    d.append(ofToString(ofGetFrameNum()));
-    d.append(".csv");
-    csvRecorder.save(d);
+    if (finalLines.size() > 0)
+    {
+        ofxCsv csvRecorder;
+        csvRecorder.clear();
+        for (int i = 0; i < finalLines.size(); i++)
+        {
+            ofxCsvRow row;
+            
+            // index
+            row.setInt(0, i);
+            
+            // start point
+            int startIndex = finalLines[i][0];
+            float startX = nodes[startIndex].x;
+            float startY = nodes[startIndex].y;
+            float startZ = nodes[startIndex].z;
+            
+            row.setFloat(1, startX);
+            row.setFloat(2, startY);
+            row.setFloat(3, startZ);
+            
+            // end point
+            int endIndex = finalLines[i][1];
+            float endX = nodes[endIndex].x;
+            float endY = nodes[endIndex].y;
+            float endZ = nodes[endIndex].z;
+            
+            row.setFloat(4, endX);
+            row.setFloat(5, endY);
+            row.setFloat(6, endZ);
+            
+            // thicknesses
+            int startThickness = nodeThickness[startIndex];
+            int endThickness = nodeThickness[endIndex];
+            
+            row.setInt(7, startThickness);
+            row.setInt(8, endThickness);
+            
+            csvRecorder.addRow(row);
+        }
+        string d = "Data";
+        d.append(ofToString(ofGetFrameNum()));
+        d.append(".csv");
+        csvRecorder.save(d);
+    }
 }
 
 void Venation3DClosed::attractorCheck()
