@@ -24,20 +24,22 @@ private:
     int tempNodesSize;
     int newLinesIndex;
     int containerNum;
+    
     float containerLength;
     float containerDist;
     
     bool initial;
     bool finalize;
-
-    vector <bool> hasChildren;
     
     vector <ofVec2f> attractors;
     vector <ofVec2f> nodes;
     
+    vector <bool> hasChildren;
+    
+    vector <float> nodeThickness;
+    
     vector <int> attractorIndices;
     vector <int> nodeParents;
-    vector <int> nodeThickness;
     vector <int> passedNodes;
     vector <vector <int>> lines;
     vector <vector <int>> finalLines;

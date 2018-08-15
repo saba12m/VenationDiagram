@@ -27,20 +27,24 @@ private:
     int tempNodesSize;
     int newLinesIndex;
     int containerNum;
+    
     float containerLength; // will have to change these based on point filling
     float containerDist;
+    
     bool initial;
     bool finalize;
-    
-    vector <bool> hasChildren;
     
     vector <ofVec3f> attractors;
     vector <ofVec3f> nodes;
     
+    vector <bool> hasChildren;
+    
+    vector <float> nodeThickness;
+    
     vector <int> attractorIndices;
     vector <int> nodeParents;
-    vector <int> nodeThickness;
     vector <int> passedNodes;
+
     vector <vector <int>> nodeNeighbors;
     vector <vector <int>> attractorNeighbors;
     vector <vector <int>> passedContainers;

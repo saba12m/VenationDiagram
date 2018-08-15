@@ -15,6 +15,7 @@
 		77699BF6BD81647F909A0009 /* ofxCsv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFECE002FA2814DBD4904261 /* ofxCsv.cpp */; };
 		8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDE55D82BD962DAC0E94B708 /* ofxAssimpModelLoader.cpp */; };
 		95EA515D9EB4B0BE1C6A0912 /* Venation3DClosed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 167FAA893945EE9045D819A5 /* Venation3DClosed.cpp */; };
+		9C19D0B22124B40A00B92C69 /* Venation3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C19D0B12124B40A00B92C69 /* Venation3D.cpp */; };
 		A78E8490FE2F17D5D20E9FC9 /* Venation2DClosed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D32D2BB3B888B54AB8F02810 /* Venation2DClosed.cpp */; };
 		B8846EF8E504895A4A9EFEC0 /* ofxAssimpTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F2EE44AD04FF549AB13699 /* ofxAssimpTexture.cpp */; };
 		CF13867BCCC8E78526FEAAF7 /* Venation3DOpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EED7009D7358802F4D082865 /* Venation3DOpen.cpp */; };
@@ -103,6 +104,8 @@
 		9339B8AD0EF31B7708C53B9F /* ProgressHandler.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ProgressHandler.hpp; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/ProgressHandler.hpp; sourceTree = SOURCE_ROOT; };
 		96EBF8A6CD3F11C79F7950BC /* cexport.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cexport.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/cexport.h; sourceTree = SOURCE_ROOT; };
 		98033501202172DF458BD6CF /* vector2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vector2.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/vector2.h; sourceTree = SOURCE_ROOT; };
+		9C19D0B12124B40A00B92C69 /* Venation3D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Venation3D.cpp; sourceTree = "<group>"; };
+		9C19D0B42124B43600B92C69 /* Venation3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Venation3D.h; sourceTree = "<group>"; };
 		9FE6B1567FD15057E4C07D4D /* AndroidJNIIOSystem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AndroidJNIIOSystem.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/port/AndroidJNI/AndroidJNIIOSystem.h; sourceTree = SOURCE_ROOT; };
 		9FECF0FCF0CCAEC9C58FE54F /* version.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = version.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/version.h; sourceTree = SOURCE_ROOT; };
 		A6197D72F51ED9030D7C5F16 /* vector3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vector3.h; path = ../../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp/vector3.h; sourceTree = SOURCE_ROOT; };
@@ -390,6 +393,8 @@
 				B2370F3147F087DB5EAACD57 /* Venation2DOpen.cpp */,
 				B7476A4249543B08AF6FE622 /* Venation2DClosed.h */,
 				D32D2BB3B888B54AB8F02810 /* Venation2DClosed.cpp */,
+				9C19D0B42124B43600B92C69 /* Venation3D.h */,
+				9C19D0B12124B40A00B92C69 /* Venation3D.cpp */,
 				1B7AEB21F03DE3DBC0244047 /* Venation3DOpen.h */,
 				EED7009D7358802F4D082865 /* Venation3DOpen.cpp */,
 				03C874877E05426CB9B7F4FB /* Venation3DClosed.h */,
@@ -526,6 +531,7 @@
 				483FA4F6D5FA6422C559B1F5 /* ofxAssimpMeshHelper.cpp in Sources */,
 				3B8120368B4FCCD80883BAF3 /* ofxAssimpAnimation.cpp in Sources */,
 				B8846EF8E504895A4A9EFEC0 /* ofxAssimpTexture.cpp in Sources */,
+				9C19D0B22124B40A00B92C69 /* Venation3D.cpp in Sources */,
 				8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */,
 				77699BF6BD81647F909A0009 /* ofxCsv.cpp in Sources */,
 				EE4D1E14E6E3D28AB35B1BB3 /* ofxCsvRow.cpp in Sources */,

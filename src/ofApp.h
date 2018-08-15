@@ -4,13 +4,13 @@
 
 #include "Venation2DOpen.h"
 #include "Venation2DClosed.h"
+#include "Venation3D.h"
 #include "Venation3DOpen.h"
 #include "Venation3DClosed.h"
 #include "BranchMesh.h"
 
-#include "ofxAssimpModelLoader.h"
-#include "ofxRayTriangleIntersection.h"
-#include "ofxCsv.h"
+//#include "ofxAssimpModelLoader.h"
+//#include "ofxRayTriangleIntersection.h"
 
 class ofApp : public ofBaseApp{
 
@@ -33,31 +33,32 @@ public:
 		
 private:
     ofEasyCam cam;
-    ofLight dirLight1, dirLight2, dirLight3, dirLight4, dirLight5, dirLight6;
+    ofLight dirLight;
 
 //    Venation2DOpen v;
 //    Venation2DClosed v;
-//    Venation3DOpen v;
-    Venation3DClosed v;
+    Venation3DOpen v;
+//    Venation3DClosed v;
+    
+    Venation3D vv;
     
     bool run;
-    ofImage screen;
     
     BranchMesh m;
     
-    // mesh
-    ofxAssimpModelLoader geometry;
-    ofMesh geometryMesh;
-    ofxAssimpModelLoader surface;
-    ofMesh surfaceMesh;
-    ofBoxPrimitive boundingBox;
+//    // mesh
+//    ofxAssimpModelLoader geometry;
+//    ofMesh geometryMesh;
+//    ofxAssimpModelLoader surface;
+//    ofMesh surfaceMesh;
+//    ofBoxPrimitive boundingBox;
+//    
+//    vector <ofVec3f> points;
     
-    vector <ofVec3f> points;
-    
-    // raycasting
-    ofxRayTriangleIntersection rtIntersect;
-    vector <FaceTri> tris;
-    vector <Ray> rays;
-    vector <ofVec3f> pIn;
-    vector <ofVec3f> pOut;
+//    // raycasting
+//    ofxRayTriangleIntersection rtIntersect;
+//    vector <FaceTri> tris;
+//    vector <Ray> rays;
+//    vector <ofVec3f> pIn;
+//    vector <ofVec3f> pOut;
 };

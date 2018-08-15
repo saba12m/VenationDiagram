@@ -2,14 +2,15 @@
 
 void Venation3DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttractors)
 {
-    hasChildren.clear();
-    
     attractors.clear();
     nodes.clear();
     
+    hasChildren.clear();
+    
+    nodeThickness.clear();
+    
     attractorIndices.clear();
     nodeParents.clear();
-    nodeThickness.clear();
     passedNodes.clear();
     nodeNeighbors.clear();
     attractorNeighbors.clear();
@@ -30,11 +31,14 @@ void Venation3DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     
     // setting starting Point
     nodes.push_back(ofVec3f(0, 0, 0));
-    //    nodes.push_back(ofVec3f(0, 0, -(leafRadius - nodeRadius)));
-    nodeParents.push_back(-1); // meaning it doesn't have a parent
-
+//    nodes.push_back(ofVec3f(-(leafRadius - nodeRadius), 0, 0));
+//    nodes.push_back(ofVec3f(0, -(leafRadius - nodeRadius), 0));
+    
+    for (int i = 0; i < nodes.size(); i++)
+        nodeParents.push_back(-1); // meaning it doesn't have a parent
+    
     // setting up the container size
-    containerNum = (int) sqrt(_noOfAttractors / 12);
+    containerNum = (int) cbrt(_noOfAttractors / 6);
     containerLength = (float) leafRadius * 2 / (float) containerNum;
     while (containerLength < nodeRadius * 2) // just in case the container sizes are larger than the nodes
     {
@@ -57,7 +61,7 @@ void Venation3DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttracto
     while (attractors.size() < _noOfAttractors && counter < _noOfAttractors * 2)
     {
         // create new attractor
-        float r = ofRandom(leafRadius * 0.1, leafRadius - nodeRadius);
+        float r = ofRandom(leafRadius * 0.2, leafRadius - nodeRadius);
         float phi = ofRandom(ofDegToRad(360));
         float theta = ofRandom(ofDegToRad(180));
         float x = r * sin(theta) * cos(phi);
@@ -127,8 +131,8 @@ void Venation3DClosed::update()
     {
         calculateThickness();
         finalRngStructure();
-        finalize = false;
         saveFile();
+        finalize = false;
     }
     initial = false;
     progressCounter++;
@@ -173,23 +177,25 @@ void Venation3DClosed::draw()
     for (int i = 0; i < attractors.size(); i++) ofDrawSphere(attractors[i].x, attractors[i].y, attractors[i].z, nodeRadius);
     
     // draw nodes (colors based on placement in containers (R for X, G for Y, B for Z))
-//    ofFill();
-//    for (int i = 0; i < containers.size(); i++)
-//        for (int j = 0; j < containers[i].size(); j++)
-//            for (int k = 0; k < containers[i][j].size(); k++)
-//            if (!containers[i][j][k].empty())
-//                for (int n = 0; n < containers[i][j][k].size(); n++)
-//                {ofFill();
-//                    int index = containers[i][j][k][n];
-//                    float r = (nodeThickness.size() > 0) ? nodeThickness[index] / 2.0 : nodeRadius;
-//                    ofSetColor((255 / containers.size()) * i, (255 / containers[i].size()) * j, (255 / containers[i][j].size()) * k);
-//                    ofDrawSphere(nodes[index].x, nodes[index].y, nodes[index].z, r);
-//                    ofNoFill();
-//                    ofSetColor(255);
-//                    if (hasChildren.size() > 0)
-//                        if (!hasChildren[index])
-//                            ofDrawSphere(nodes[index].x, nodes[index].y, nodes[index].z, r);
-//                }
+    for (int i = 0; i < containers.size(); i++)
+        for (int j = 0; j < containers[i].size(); j++)
+            for (int k = 0; k < containers[i][j].size(); k++)
+            if (!containers[i][j][k].empty())
+                for (int n = 0; n < containers[i][j][k].size(); n++)
+                {
+                    int index = containers[i][j][k][n];
+                    float r = (nodeThickness.size() > 0) ? nodeThickness[index]: nodeRadius;
+                    ofFill();
+                    ofSetColor((255 / containers.size()) * i, (255 / containers[i].size()) * j, (255 / containers[i][j].size()) * k);
+                    ofDrawSphere(nodes[index].x, nodes[index].y, nodes[index].z, r);
+                    
+                    // drawing the branch tips
+                    ofNoFill();
+                    ofSetColor(255);
+                    if (hasChildren.size() > 0)
+                        if (!hasChildren[index])
+                            ofDrawSphere(nodes[index].x, nodes[index].y, nodes[index].z, r);
+                }
 
     // draw tree lines (with thickness at the end)
     ofPushStyle();
@@ -223,55 +229,6 @@ void Venation3DClosed::draw()
             if (nodeNeighbors[i].size() > 0)
                 for (int j = 0; j < nodeNeighbors[i].size(); j++)
                     ofDrawLine(nodes[i].x, nodes[i].y, nodes[i].z, attractors[nodeNeighbors[i][j]].x, attractors[nodeNeighbors[i][j]].y, attractors[nodeNeighbors[i][j]].z);
-}
-
-void Venation3DClosed::saveFile()
-{
-    if (finalLines.size() > 0)
-    {
-        ofxCsv csvRecorder;
-        csvRecorder.clear();
-        for (int i = 0; i < finalLines.size(); i++)
-        {
-            ofxCsvRow row;
-            
-            // index
-            row.setInt(0, i);
-            
-            // start point
-            int startIndex = finalLines[i][0];
-            float startX = nodes[startIndex].x;
-            float startY = nodes[startIndex].y;
-            float startZ = nodes[startIndex].z;
-            
-            row.setFloat(1, startX);
-            row.setFloat(2, startY);
-            row.setFloat(3, startZ);
-            
-            // end point
-            int endIndex = finalLines[i][1];
-            float endX = nodes[endIndex].x;
-            float endY = nodes[endIndex].y;
-            float endZ = nodes[endIndex].z;
-            
-            row.setFloat(4, endX);
-            row.setFloat(5, endY);
-            row.setFloat(6, endZ);
-            
-            // thicknesses
-            int startThickness = nodeThickness[startIndex];
-            int endThickness = nodeThickness[endIndex];
-            
-            row.setInt(7, startThickness);
-            row.setInt(8, endThickness);
-            
-            csvRecorder.addRow(row);
-        }
-        string d = "Data";
-        d.append(ofToString(ofGetFrameNum()));
-        d.append(".csv");
-        csvRecorder.save(d);
-    }
 }
 
 void Venation3DClosed::attractorCheck()
@@ -468,7 +425,6 @@ void Venation3DClosed::calculateThickness()
     // calculating each node's thickness
     nodeThickness.resize(nodes.size(), 0);
     for (int i = 0; i < nodes.size(); i++)
-    {
         if (!hasChildren[i])
         {
             int index = i;
@@ -478,7 +434,9 @@ void Venation3DClosed::calculateThickness()
                 index = nodeParents[index];
             }
         }
-    }
+    
+    for (int i = 0; i < nodes.size(); i++)
+        nodeThickness[i] = pow(nodeThickness[i], 1.0 / 2.4);
 }
 
 void Venation3DClosed::finalRngStructure()
@@ -522,4 +480,53 @@ void Venation3DClosed::finalRngStructure()
             if (relativeNeighborhood)
                 finalLines.push_back(vector <int> {i, j});
         }
+}
+
+void Venation3DClosed::saveFile()
+{
+    if (finalLines.size() > 0)
+    {
+        ofxCsv csvRecorder;
+        csvRecorder.clear();
+        for (int i = 0; i < finalLines.size(); i++)
+        {
+            ofxCsvRow row;
+            
+            // index
+            row.setInt(0, i);
+            
+            // start point
+            int startIndex = finalLines[i][0];
+            float startX = nodes[startIndex].x;
+            float startY = nodes[startIndex].y;
+            float startZ = nodes[startIndex].z;
+            
+            row.setFloat(1, startX);
+            row.setFloat(2, startY);
+            row.setFloat(3, startZ);
+            
+            // end point
+            int endIndex = finalLines[i][1];
+            float endX = nodes[endIndex].x;
+            float endY = nodes[endIndex].y;
+            float endZ = nodes[endIndex].z;
+            
+            row.setFloat(4, endX);
+            row.setFloat(5, endY);
+            row.setFloat(6, endZ);
+            
+            // thicknesses
+            int startThickness = nodeThickness[startIndex];
+            int endThickness = nodeThickness[endIndex];
+            
+            row.setInt(7, startThickness);
+            row.setInt(8, endThickness);
+            
+            csvRecorder.addRow(row);
+        }
+        string d = "VenationClosed";
+        d.append(ofToString(ofGetFrameNum()));
+        d.append(".csv");
+        csvRecorder.save(d);
+    }
 }

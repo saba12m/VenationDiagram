@@ -2,14 +2,15 @@
 
 void Venation2DClosed::setup(int _leafRadius, int _nodeRadius, int _noOfAttractors)
 {
-    hasChildren.clear();
-    
     attractors.clear();
     nodes.clear();
     
+    hasChildren.clear();
+    
+    nodeThickness.clear();
+    
     attractorIndices.clear();
     nodeParents.clear();
-    nodeThickness.clear();
     passedNodes.clear();
     lines.clear();
     finalLines.clear();
@@ -155,7 +156,7 @@ void Venation2DClosed::draw()
                 for (int k = 0; k < containers[i][j].size(); k++)
                 {ofFill();
                     int index = containers[i][j][k];
-                    float r = (nodeThickness.size() > 0) ? nodeThickness[index] / 2.0 : nodeRadius;
+                    float r = (nodeThickness.size() > 0) ? nodeThickness[index] : nodeRadius;
                     ofSetColor((255 / containers.size()) * i, (255 / containers[i].size()) * j, 0);
                     ofDrawCircle(nodes[index].x, nodes[index].y, r);
                     ofNoFill();
@@ -384,7 +385,6 @@ void Venation2DClosed::calculateThickness()
     // calculating each node's thickness
     nodeThickness.resize(nodes.size(), 0);
     for (int i = 0; i < nodes.size(); i++)
-    {
         if (!hasChildren[i])
         {
             int index = i;
@@ -394,7 +394,9 @@ void Venation2DClosed::calculateThickness()
                 index = nodeParents[index];
             }
         }
-    }    
+    
+    for (int i = 0; i < nodes.size(); i++)
+        nodeThickness[i] = pow(nodeThickness[i], 1.0 / 2.4);
 }
 
 void Venation2DClosed::finalRngStructure()
