@@ -9,7 +9,7 @@ void ofApp::setup(){
     ofEnableDepthTest();
     ofEnableAlphaBlending();
     ofSetVerticalSync(false);
-    cam.setDistance(200);
+    cam.setDistance(800);
     
     // set lights
     dirLight.setDiffuseColor(ofColor(255, 255, 255));
@@ -19,13 +19,17 @@ void ofApp::setup(){
     
     run = false;
     
-    v.setup(100, 2, 480);
-    vv.setup(480, 2, 0.3);
+//    v.setup(100, 2, 480);
+    vv.setup(480, 2, 0.3, (int) ofRandom(100));
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (run) v.update();
+    if (run)
+    {
+//        v.update();
+        vv.update();
+    }
 }
 
 //--------------------------------------------------------------
@@ -57,7 +61,7 @@ void ofApp::keyPressed(int key){
     if (key == 'r')
     {
         v.setup(100, 2, 480);
-        vv.setup(480, 2, 0.3);
+        vv.setup(480, 2, 0.3, (int) ofRandom(100));
     }
 }
 

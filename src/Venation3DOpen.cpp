@@ -1,5 +1,34 @@
 #include "Venation3DOpen.h"
 
+void Venation3DOpen::setup(vector <ofVec3f> _attractors, vector <ofVec3f> _originNodes, int _nodeRadius)
+{
+    hasChildren.clear();
+    
+    attractors.clear();
+    nodes.clear();
+    
+    nodeThickness.clear();
+    
+    nodeParents.clear();
+    lines.clear();
+    nodeClosestPoints.clear();
+    
+    nodeRadius = _nodeRadius;
+    
+    finalize = true;
+    
+    // setting starting Point
+    for (int i = 0; i < _originNodes.size(); i++)
+    {
+        nodes.push_back(_originNodes[i]);
+        nodeParents.push_back(-1);
+    }
+    
+    // setting attraction points
+    for (int i = 0; i < _attractors.size(); i++)
+        attractors.push_back(_attractors[i]);
+}
+
 void Venation3DOpen::setup(int _leafRadius, int _nodeRadius, int _noOfAttractors)
 {
     hasChildren.clear();
@@ -62,7 +91,7 @@ void Venation3DOpen::update()
     if (attractors.empty() && finalize)
     {
         calculateThickness();
-        saveFile();
+//        saveFile();
         finalize = false;
     }
 }
@@ -70,9 +99,12 @@ void Venation3DOpen::update()
 void Venation3DOpen::draw()
 {
     // draw leaf
-    ofNoFill();
-    ofSetColor(200, 100);
-    ofDrawSphere(0, 0, leafRadius);
+    if (leafRadius > 0)
+    {
+        ofNoFill();
+        ofSetColor(200, 100);
+        ofDrawSphere(0, 0, leafRadius);
+    }
     
     // draw tree lines
     ofPushStyle();
@@ -93,7 +125,7 @@ void Venation3DOpen::draw()
     ofSetColor(255, 150, 150);
     for (int i = 0; i < attractors.size(); i++) ofDrawSphere(attractors[i].x, attractors[i].y, attractors[i].z, nodeRadius);
     
-    //    // draw nodes
+    // draw nodes
     for (int i = 0; i < nodes.size(); i++)
     {
         float r = (nodeThickness.size() > 0) ? nodeThickness[i]: nodeRadius;
@@ -108,6 +140,27 @@ void Venation3DOpen::draw()
             if (!hasChildren[i])
                 ofDrawSphere(nodes[i].x, nodes[i].y, nodes[i].z, r);
     }
+}
+
+bool Venation3DOpen::done()
+{
+    if (nodeThickness.size() > 0) return true;
+    else return false;
+}
+
+vector <ofVec3f> Venation3DOpen::getNodes()
+{
+    return nodes;
+}
+
+vector <vector <int>> Venation3DOpen::getLines()
+{
+    return lines;
+}
+
+vector <int> Venation3DOpen::getParents()
+{
+    return nodeParents;
 }
 
 void Venation3DOpen::attractorCheck()
@@ -249,9 +302,8 @@ void Venation3DOpen::saveFile()
         
         csvRecorder.addRow(row);
     }
-    string d = "VenationOpen";
+    string d = "VenationOpen_";
     d.append(ofToString(ofGetFrameNum()));
     d.append(".csv");
     csvRecorder.save(d);
 }
-

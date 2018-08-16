@@ -37,8 +37,8 @@ private:
 
 //    Venation2DOpen v;
 //    Venation2DClosed v;
-    Venation3DOpen v;
-//    Venation3DClosed v;
+//    Venation3DOpen v;
+    Venation3DClosed v;
     
     Venation3D vv;
     

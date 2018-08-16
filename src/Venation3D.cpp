@@ -1,33 +1,35 @@
 #include "Venation3D.h"
 
-void Venation3D::setup(int _noOfAttractors, int _nodeRadius, float _degreeOfOpenness)
+void Venation3D::setup(int _noOfAttractors, int _nodeRadius, float _degreeOfOpenness, int _number)
 {
     openAttractors.clear();
     closedAttractors.clear();
-    tris.clear();
-    //    // geometry
-    //    ofxAssimpModelLoader geometry;
-    //    ofMesh geometryMesh;
-    //    ofxAssimpModelLoader surface;
-    //    ofMesh surfaceMesh;
-    //
-    //    ofBoxPrimitive boundingBox; //
+    nodeRadius = _nodeRadius;
+    number = _number;
+    save = true;
+    switchGrowth = true;
     
-    geometry.loadModel("Test 1 - Geometry.obj");
+    // geometry
+    ofxAssimpModelLoader geometry;
+    ofMesh geometryMesh;
+    ofxAssimpModelLoader surface;
+    ofMesh surfaceMesh;
+    
+    geometry.loadModel("Test 2 - Geometry.obj");
     geometryMesh = geometry.getMesh(0);
     
-    surface.loadModel("Test 1 - Surface.obj");
+    surface.loadModel("Test 2 - Surface.obj");
     surfaceMesh = surface.getMesh(0);
     
-    //    vector <ofVec3f> points;
+    vector <ofVec3f> points;
     
     // get bounding box
-    float minX =   std::numeric_limits<float>::max();
-    float maxX = - std::numeric_limits<float>::max();
-    float minY =   std::numeric_limits<float>::max();
-    float maxY = - std::numeric_limits<float>::max();
-    float minZ =   std::numeric_limits<float>::max();
-    float maxZ = - std::numeric_limits<float>::max();
+    minX =   std::numeric_limits<float>::max();
+    maxX = - std::numeric_limits<float>::max();
+    minY =   std::numeric_limits<float>::max();
+    maxY = - std::numeric_limits<float>::max();
+    minZ =   std::numeric_limits<float>::max();
+    maxZ = - std::numeric_limits<float>::max();
     
     auto verts = geometryMesh.getVertices();
     for (int i = 0; i < verts.size(); i++)
@@ -41,17 +43,19 @@ void Venation3D::setup(int _noOfAttractors, int _nodeRadius, float _degreeOfOpen
         if(v.z > maxZ) maxZ = v.z;
     }
     
-    boundingBox.set(maxX - minX, maxY - minY, maxZ - minZ); //
-    boundingBox.setPosition((maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2); //
+//    ofBoxPrimitive boundingBox;
+//    boundingBox.set(maxX - minX, maxY - minY, maxZ - minZ);
+//    boundingBox.setPosition((maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2);
     
-    //    // raycasting
-    //    ofxRayTriangleIntersection rtIntersect;
-    //    vector <FaceTri> tris;
-    //    vector <Ray> rays;
-    //    vector <ofVec3f> pIn;
-    //    vector <ofVec3f> pOut;
+    // raycasting
+    ofxRayTriangleIntersection rtIntersect;
+    vector <FaceTri> tris;
+    vector <Ray> rays;
+    vector <ofVec3f> pIn;
+    vector <ofVec3f> pOut;
     
     // input mesh faces
+    tris.clear();
     for (int i = 0; i < geometryMesh.getUniqueFaces().size(); i++)
     {
         auto face = geometryMesh.getFace(i);
@@ -125,7 +129,6 @@ void Venation3D::setup(int _noOfAttractors, int _nodeRadius, float _degreeOfOpen
     
     // volume population
     while (openAttractors.size() + closedAttractors.size() < _noOfAttractors)
-//    for (int i = 0; i < n; i ++)
     {
         rays.clear();
         float x = ofRandom(minX, maxX);
@@ -146,40 +149,59 @@ void Venation3D::setup(int _noOfAttractors, int _nodeRadius, float _degreeOfOpen
         }
     }
     
-    cout << openAttractors.size() << " - " << closedAttractors.size() << endl;
+    vector <ofVec3f> openOrigins;
+    openOrigins.clear();
+    openOrigins.push_back(ofVec3f(0, 0, 0));
+    
+    vOpen.setup(openAttractors, openOrigins, nodeRadius);
 }
 
 void Venation3D::update()
 {
+    if (!vOpen.done()) vOpen.update();
+    else if (switchGrowth)
+    {
+        vClosed.setup(closedAttractors, vOpen.getNodes(), vOpen.getLines(),vOpen.getParents(),
+                      nodeRadius, minX, maxX, minY, maxY, minZ, maxZ);
+        switchGrowth = false;
+    }
+    else vClosed.update();
     
+    if (vClosed.done() && save)
+    {
+        vClosed.saveFile(number);
+        save = false;
+    }
 }
 
 void Venation3D::draw()
 {
-    // bounding box
-    ofSetColor(0, 0, 255);
-    boundingBox.drawWireframe();
+//    // draw bounding box
+//    ofSetColor(0, 0, 255);
+//    boundingBox.drawWireframe();
+//
+//    // draw geometry mesh
+//    ofSetColor(255, 100, 0);
+//    geometryMesh.drawWireframe();
+//
+//    // draw surface mesh
+//    ofSetColor(255, 255, 0);
+//    surfaceMesh.drawWireframe();
+//
+//    // draw points
+//    ofPushStyle();
+//    ofFill();
+//
+//    ofSetColor(255, 0, 255);
+//    for (int i = 0; i < openAttractors.size(); i++)
+//        ofDrawSphere(openAttractors[i].x, openAttractors[i].y, openAttractors[i].z, 2);
+//
+//    ofSetColor(255, 0, 0);
+//    for (int i = 0; i < closedAttractors.size(); i++)
+//        ofDrawSphere(closedAttractors[i].x, closedAttractors[i].y, closedAttractors[i].z, 2);
+//
+//    ofPopStyle();
     
-    // geometry mesh
-    ofSetColor(0, 255, 0);
-    geometryMesh.drawWireframe();
-    
-    // surface mesh
-    ofSetColor(255, 255, 0);
-    surfaceMesh.drawWireframe();
-    
-    // drawing points
-    ofPushStyle();
-    ofFill();
-    
-    ofSetColor(0, 255, 255);
-    for (int i = 0; i < openAttractors.size(); i++)
-        ofDrawSphere(openAttractors[i].x, openAttractors[i].y, openAttractors[i].z, 0.2);
-    
-    ofSetColor(255, 0, 0);
-    for (int i = 0; i < closedAttractors.size(); i++)
-        ofDrawSphere(closedAttractors[i].x, closedAttractors[i].y, closedAttractors[i].z, 0.2);
-    
-    ofPopStyle();
-    
+    if (!vOpen.done()) vOpen.draw();
+    else vClosed.draw();
 }

@@ -7,10 +7,14 @@
 class Venation3DClosed {
     
 public:
+    void setup(vector <ofVec3f> _attractors, vector <ofVec3f> _nodes, vector <vector <int>> _lines, vector <int> _nodeParents,
+               int _nodeRadius, float _minX, float _maxX, float _minY, float _maxY, float _minZ, float _maxZ);
     void setup(int _leafRadius, int _nodeRadius, int _noOfAttractors);
     void update();
     void draw();
     void saveFile();
+    void saveFile(int num);
+    bool done();
     
 private:
     void attractorCheck();
@@ -26,10 +30,16 @@ private:
     int rngSize;
     int tempNodesSize;
     int newLinesIndex;
+    int initialNodesSize;
+    int initialLinesSize;
     int containerNum;
+    int containerNumX;
+    int containerNumY;
+    int containerNumZ;
     
-    float containerLength; // will have to change these based on point filling
+    float containerLength;
     float containerDist;
+    float minX, maxX, minY, maxY, minZ, maxZ;
     
     bool initial;
     bool finalize;
@@ -39,7 +49,7 @@ private:
     
     vector <bool> hasChildren;
     
-    vector <float> nodeThickness;
+    vector <double> nodeThickness;
     
     vector <int> attractorIndices;
     vector <int> nodeParents;
